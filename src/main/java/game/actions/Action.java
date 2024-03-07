@@ -1,7 +1,7 @@
 package game.actions;
 
 public interface Action {
-	public ActionType getMove();
+	public ActionType getActionType();
 	public double getMoveValue();
 	public double getRelativeMoveValue();
 }

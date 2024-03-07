@@ -12,4 +12,14 @@ public class Card {
 	public int getValue() {
 		return rank.ordinal() + 2; 
 	}
+
+	public CardSuit getSuit() {
+		return suit;
+	}
+
+	public CardRank getRank() {
+		return rank;
+	}
+	
+	
 }

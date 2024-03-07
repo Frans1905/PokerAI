@@ -2,6 +2,9 @@ package game.actions;
 
 public class Actions {
 
+	private static final Action FOLD_ACTION = new FoldAction();
+	private static final Action NONE_ACTION = new NoneAction(); 
+	
 	public static Action getCallAction(double callValue) {
 		return new CallAction(callValue);
 	}
@@ -11,11 +14,11 @@ public class Actions {
 	}
 	
 	public static Action getFoldAction() {
-		return new FoldAction();
+		return FOLD_ACTION;
 	}
 	
 	public static Action getNoneAction() {
-		return new NoneAction();
+		return NONE_ACTION;
 	}
 	
 	
@@ -28,7 +31,7 @@ public class Actions {
 		}
 		
 		@Override
-		public ActionType getMove() {
+		public ActionType getActionType() {
 			// TODO Auto-generated method stub
 			return ActionType.CALL;
 		}
@@ -42,6 +45,11 @@ public class Actions {
 		public double getRelativeMoveValue() {
 			return 1;
 		}
+		
+		@Override
+		public String toString() {
+			return "Called for " + callValue + " chips";
+		}
 	}
 	
 	private static class RaiseAction implements Action {
@@ -52,7 +60,7 @@ public class Actions {
 			this.raiseValue = raiseValue;
 		}
 		@Override
-		public ActionType getMove() {
+		public ActionType getActionType() {
 			// TODO Auto-generated method stub
 			return ActionType.RAISE;
 		}
@@ -66,12 +74,17 @@ public class Actions {
 			// TODO Auto-generated method stub
 			return raiseValue / callValue;
 		}
+		
+		@Override
+		public String toString() {
+			return "Raised to " + raiseValue + " chips";
+		}
 	}
 	
 	private static class FoldAction implements Action {
 
 		@Override
-		public ActionType getMove() {
+		public ActionType getActionType() {
 			// TODO Auto-generated method stub
 			return ActionType.FOLD;
 		}
@@ -88,12 +101,17 @@ public class Actions {
 			return 0;
 		}
 		
+		@Override
+		public String toString() {
+			return "Folded";
+		}
+		
 	}
 	
 	private static class NoneAction implements Action {
 
 		@Override
-		public ActionType getMove() {
+		public ActionType getActionType() {
 			// TODO Auto-generated method stub
 			return ActionType.NONE;
 		}
@@ -110,5 +128,9 @@ public class Actions {
 			throw new IllegalStateException("No value for none move");
 		}
 		
+		@Override
+		public String toString() {
+			return "None";
+		}
 	}
 }
