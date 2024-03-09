@@ -5,11 +5,11 @@ public class Actions {
 	private static final Action FOLD_ACTION = new FoldAction();
 	private static final Action NONE_ACTION = new NoneAction(); 
 	
-	public static Action getCallAction(double callValue) {
+	public static Action getCallAction(long callValue) {
 		return new CallAction(callValue);
 	}
 	
-	public static Action getRaiseAction(double callValue, double raiseValue) {
+	public static Action getRaiseAction(long callValue, long raiseValue) {
 		return new RaiseAction(callValue, raiseValue);
 	}
 	
@@ -24,9 +24,9 @@ public class Actions {
 	
 	private static class CallAction implements Action {
 
-		private double callValue;
+		private long callValue;
 		
-		public CallAction(double callValue) {
+		public CallAction(long callValue) {
 			this.callValue = callValue;
 		}
 		
@@ -37,12 +37,12 @@ public class Actions {
 		}
 
 		@Override
-		public double getMoveValue() {
+		public long getMoveValue() {
 			// TODO Auto-generated method stub
 			return callValue;
 		}
 		
-		public double getRelativeMoveValue() {
+		public long getRelativeMoveValue() {
 			return 1;
 		}
 		
@@ -53,9 +53,9 @@ public class Actions {
 	}
 	
 	private static class RaiseAction implements Action {
-		private double raiseValue;
-		private double callValue;
-		public RaiseAction(double callValue, double raiseValue) {
+		private long raiseValue;
+		private long callValue;
+		public RaiseAction(long callValue, long raiseValue) {
 			this.callValue = callValue;
 			this.raiseValue = raiseValue;
 		}
@@ -65,12 +65,12 @@ public class Actions {
 			return ActionType.RAISE;
 		}
 		@Override
-		public double getMoveValue() {
+		public long getMoveValue() {
 			// TODO Auto-generated method stub
 			return raiseValue;
 		}
 		@Override
-		public double getRelativeMoveValue() {
+		public long getRelativeMoveValue() {
 			// TODO Auto-generated method stub
 			return raiseValue / callValue;
 		}
@@ -90,13 +90,13 @@ public class Actions {
 		}
 
 		@Override
-		public double getMoveValue() {
+		public long getMoveValue() {
 			// TODO Auto-generated method stub
 			return 0;
 		}
 
 		@Override
-		public double getRelativeMoveValue() {
+		public long getRelativeMoveValue() {
 			// TODO Auto-generated method stub
 			return 0;
 		}
@@ -117,13 +117,13 @@ public class Actions {
 		}
 
 		@Override
-		public double getMoveValue() {
+		public long getMoveValue() {
 			// TODO Auto-generated method stub
 			throw new IllegalStateException("No value for none move");
 		}
 
 		@Override
-		public double getRelativeMoveValue() {
+		public long getRelativeMoveValue() {
 			// TODO Auto-generated method stub
 			throw new IllegalStateException("No value for none move");
 		}
