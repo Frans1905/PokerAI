@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.OptionalLong;
 
 import game.actions.Action;
 import game.actions.ActionType;
@@ -12,6 +11,7 @@ import game.actions.Actions;
 import game.cards.Card;
 import game.cards.CardPair;
 import game.dealer.Dealer;
+import game.environment.Environment;
 import game.evaluator.DefaultEvaluator;
 import game.evaluator.Evaluator;
 import game.player.Player;
@@ -25,9 +25,7 @@ public class Game {
 	
 	private List<Player> players;
 	private List<Player> activePlayers;
-	private List<Long> playerRoundChipsInPot;
 	
-	private List<CardPair> playerCards; 
 	private List<Card> cardsOnBoard;
 
 	
@@ -36,25 +34,32 @@ public class Game {
 	
 	Dealer dealer;
 	Evaluator evaluator;
+	Environment env;
 		
 	boolean readyForRound;
 	
-	public Game(List<Player> players) {
+	public Game(List<Player> players, Environment env) {
 		if (players.size() > 10 || players.size() < 2) {
 			throw new IllegalStateException("Expected number of players between"
 					+ "10 and 2");
 		}
+		this.env = env;
+		resetGame(players);
+	}
+
+	public void resetGame(List<Player> players) {
 		this.players = new ArrayList<>(players);
 		
 		smallBlind = DEFAULT_SMALL_BLIND;
 		potChipCount = 0;
 		callChipCount = 0;
-		playerRoundChipsInPot = new ArrayList<>(players.size());
 		
 		numCurrentPlayer = 0;
-		numSmallBlindPlayer = 0;
+		numSmallBlindPlayer = -1;
 		
-		playerCards = new ArrayList<>(players.size());
+		activePlayers = new ArrayList<>(players.size());
+		cardsOnBoard = new ArrayList<>(5);
+		
 		this.dealer = new Dealer();
 		
 		this.evaluator = new DefaultEvaluator(this);
@@ -67,19 +72,19 @@ public class Game {
 		numCurrentPlayer = numSmallBlindPlayer;	
 		activePlayers.clear();
 		activePlayers.addAll(players);
-		resetPlayerActions();
+		resetPlayers();
 		callChipCount = smallBlind * 2;
-		resetChipsInPot();
+		potChipCount = 0;
 		cardsOnBoard.clear();
 		dealer.reshuffleCards();
 		
 		readyForRound = true;
 	}
 
-	private void resetPlayerActions() {
+	private void resetPlayers() {
 		// TODO Auto-generated method stub
 		for (Player p : players) {
-			p.setLastAction(Actions.getNoneAction());
+			p.setUpPlayerForNewRound();
 		}
 	}
 
@@ -91,6 +96,7 @@ public class Game {
 		takeBlinds();
 		while(true) {
 			Action curAction = getNextAction();
+			env.updatePlayerAction(curAction, numCurrentPlayer);
 			if (handleAction(curAction)) {
 				break;
 			}
@@ -101,7 +107,7 @@ public class Game {
 		}
 		readyForRound = false;
 	}
-
+	
 	public boolean handleAction(Action curAction) {
 		if (curAction.getActionType() == ActionType.FOLD) {
 			activePlayers.remove(numCurrentPlayer);
@@ -113,7 +119,9 @@ public class Game {
 			}
 			addChipsToPot();
 			drawBoardCard();
-			numCurrentPlayer = numSmallBlindPlayer;
+			env.updateBoard(cardsOnBoard);
+			callChipCount = 0;
+			numCurrentPlayer = numSmallBlindPlayer - 1;
 			resetPlayerActions();	
 		}
 		else if (curAction.getActionType() == ActionType.RAISE) {
@@ -126,42 +134,64 @@ public class Game {
 
 	private void addChipsToPot() {
 		// TODO Auto-generated method stub
-		potChipCount = activePlayers.size() * callChipCount;
-		callChipCount = 0;
+		for (int i = 0; i < players.size(); i++) {
+			takePlayerChipsOnTable(i);
+		}
 	}
 
 	private void drawBoardCard() {
 		// TODO Auto-generated method stub
-		cardsOnBoard.add(dealer.drawCard());
+		if (cardsOnBoard.size() >= 3) {
+			cardsOnBoard.add(dealer.drawCard());
+		}
+		else {
+			cardsOnBoard.add(dealer.drawCard());
+			cardsOnBoard.add(dealer.drawCard());
+			cardsOnBoard.add(dealer.drawCard());
+		}
 	}
 
 	private boolean checkPastActions() {
 		// TODO Auto-generated method stub
-		OptionalLong maxChipValueOpt = activePlayers.stream().filter(p -> p.getLastAction().getActionType() != ActionType.NONE).
+		/*OptionalLong maxChipValueOpt = activePlayers.stream().filter(p -> p.getLastAction().getActionType() != ActionType.NONE).
 				mapToLong(p -> p.getLastAction().getMoveValue()).max();
 		if (maxChipValueOpt.isEmpty()) return false;
 		long maxChipValue = maxChipValueOpt.getAsLong();
+		*/
 		for (Player p : activePlayers) {
 			Action lastAction = p.getLastAction();
+			int playerIndex = players.indexOf(p);
+			if(p.getLastAction().getActionType() == ActionType.ALLIN) {
+				continue;
+			}
 			if (lastAction.getActionType() == ActionType.NONE) {
 				return false;
 			}
-			else if (lastAction.getActionType() == ActionType.CHECK
-					&& maxChipValue != 0) {
+			else if (lastAction.getActionType() == ActionType.CHECK && 
+					callChipCount != 0  ||
+					p.getBetChipCount() < smallBlind * 2 ||
+					playerIndex == numSmallBlindPlayer + 1 &&
+					p.getBetChipCount() == smallBlind + 2) {
 				return false;
 			}
-			else if (lastAction.getMoveValue() != maxChipValue) {
+			else if (p.getBetChipCount() != callChipCount) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	private void resetPlayerActions() {
+		for (Player p : players) {
+			p.setLastAction(Actions.getNoneAction());
+		}
 	}
 
 	public Action getNextAction() {
 		// TODO Auto-generated method stub
 		getNextPlayer();
 		Player curPlayer = players.get(numCurrentPlayer);
-		return curPlayer.getPlayerAction();
+		return curPlayer.getPlayerAction(this);
 	}
 	
 	private int getFirstPlayer() {
@@ -172,19 +202,30 @@ public class Game {
 
 	private int getNextPlayer() {
 		do {
-			numCurrentPlayer++;
+			numCurrentPlayer = ++numCurrentPlayer % players.size();
 		} while(!activePlayers.contains(players.get(numCurrentPlayer)));
 		return numCurrentPlayer;
 	}
 
 	private void drawPlayerCards() {
 		// TODO Auto-generated method stub
-		dealer.dealPairs(playerCards);
+		for (Player p: players) {
+			p.setCards(dealer.dealPair());
+		}
 	}
 	
-	private void takeBlinds() {
-		players.get(numCurrentPlayer++).takeChips(smallBlind);
-		players.get(numCurrentPlayer++).takeChips(smallBlind * 2); 
+	public void takeBlinds() {
+		if (numCurrentPlayer != numSmallBlindPlayer) {
+			throw new IllegalStateException("Expected current player to be small blind, small blind index: " + numSmallBlindPlayer + ", currPlayerIndex: " + numCurrentPlayer);
+		}
+		players.get(numCurrentPlayer++).takeSmallBlind(smallBlind);
+		players.get(numCurrentPlayer).takeBigBlind(smallBlind);
+	}
+	
+	private long takePlayerChipsOnTable(int index) {
+		long amount = players.get(index).takeBetChips();
+		potChipCount += amount;
+		return amount;
 	}
 
 	public long getSmallBlind() {
@@ -218,12 +259,4 @@ public class Game {
 	public long getCallChipCount() {
 		return callChipCount;
 	}
-	
-	private void resetChipsInPot() {
-		for (int i = 0; i < players.size(); i++) {
-			playerRoundChipsInPot.set(i, (long) 0);
-		}
-	}
-	
-	
 }

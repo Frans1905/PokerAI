@@ -21,9 +21,13 @@ public class Dealer {
 		return pairs;
 	}
 	
+	public CardPair dealPair() {
+		return new CardPair(drawCard(), drawCard());
+	}
+	
 	public void dealPairs(List<CardPair> pairs) {
 		for (int i = 0; i < pairs.size(); i++) {
-			pairs.set(i, new CardPair(drawCard(), drawCard()));
+			pairs.set(i, dealPair());
 		}
 	}
 	

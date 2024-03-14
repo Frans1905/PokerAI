@@ -3,54 +3,58 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import game.Game;
 import game.actions.Action;
-import game.actions.Actions;
+import game.environment.Environment;
+import game.environment.ShellEnvironment;
 import game.player.Player;
+import game.player.stub.CallPlayer;
+import game.player.stub.FoldPlayer;
+import game.player.stub.RaisePlayer;
 
 @ExtendWith(MockitoExtension.class)
 class GameTest {
 	
-	Player callPlayer;
-	Player foldPlayer;
-	Player raisePlayer;
-	Game game;
+	static Player callPlayer;
+	static Player foldPlayer;
+	static Player raisePlayer;
+	static Game game;
 
 	@BeforeAll
-	void setup() {
-		callPlayer = Mockito.mock(Player.class);
-		foldPlayer = Mockito.mock(Player.class);
-		raisePlayer = Mockito.mock(Player.class);
+	static void setup() {
+		callPlayer = new CallPlayer();
+		foldPlayer = new FoldPlayer();
+		raisePlayer = new RaisePlayer();
 		
-		game = new Game(List.of(callPlayer, foldPlayer, raisePlayer));
+		Environment env = new ShellEnvironment();
+
+		game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), env);
 		
-		Mockito.when(callPlayer.getPlayerAction()).thenReturn(
-				Actions.getCallAction(game.getCallChipCount()));
-		
-		Mockito.when(raisePlayer.getPlayerAction()).thenReturn(
-				Actions.getRaiseAction(game.getCallChipCount(), game.getCallChipCount() + 50));
-		
-		Mockito.when(foldPlayer.getPlayerAction()).thenReturn(
-				Actions.getFoldAction());
+	}
+	
+	@AfterEach
+	void reset() {
+		game.resetGame(List.of(callPlayer, foldPlayer, raisePlayer));
 	}
 	
 	@Test
 	void testGameConstructor() {
+		Environment env = new ShellEnvironment();
 		assertDoesNotThrow(() -> {
-			Game game = new Game(List.of(callPlayer, foldPlayer, raisePlayer));
+			Game game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), env);
 		});
 		assertEquals(Game.DEFAULT_SMALL_BLIND, game.getSmallBlind());
 		assertEquals(3, game.getPlayers().size());
 		assertEquals(0, game.getPotChipCount());
 		assertEquals(0, game.getNumCurrentPlayer());
-		assertEquals(0, game.getNumSmallBlindPlayer());
-		assertEquals(3, game.getActivePlayers().size());
+		assertEquals(-1, game.getNumSmallBlindPlayer());
+		assertEquals(0, game.getActivePlayers().size());
 		assertEquals(0, game.getCallChipCount());
 		assertEquals(0, game.getCardsOnBoard().size());
 	}
@@ -61,6 +65,8 @@ class GameTest {
 			game.setupNewRound();
 		});
 
+		game.takeBlinds();
+		
 		Action action = game.getNextAction();
 		
 		game.handleAction(action);
@@ -68,16 +74,39 @@ class GameTest {
 		assertEquals(Game.DEFAULT_SMALL_BLIND, game.getSmallBlind());
 		assertEquals(3, game.getPlayers().size());
 		assertEquals(0, game.getPotChipCount());
-		assertEquals(0, game.getNumCurrentPlayer());
+		assertEquals(2, game.getNumCurrentPlayer());
 		assertEquals(0, game.getNumSmallBlindPlayer());
 		assertEquals(3, game.getActivePlayers().size());
-		assertEquals(30, game.getCallChipCount());
+		assertEquals(80, game.getCallChipCount());
 		assertEquals(0, game.getCardsOnBoard().size());
 	}
 	
 	@Test
 	void testGameOneTurn() {
 		
+		assertDoesNotThrow(() -> {
+			game.setupNewRound();
+		});
+
+		
+		game.takeBlinds();
+		
+		Action action = game.getNextAction();
+		game.handleAction(action);
+		action = game.getNextAction();
+		game.handleAction(action);
+		action = game.getNextAction();
+		game.handleAction(action);
+		
+		assertEquals(3, game.getPlayers().size());
+		assertEquals(190, game.getPotChipCount());
+		assertEquals(1, game.getNumCurrentPlayer());
+		assertEquals(0, game.getNumSmallBlindPlayer());
+		assertEquals(2, game.getActivePlayers().size());
+		assertEquals(0, game.getCallChipCount());
+		assertEquals(3, game.getCardsOnBoard().size());
 	}
+	
+	
 
 }

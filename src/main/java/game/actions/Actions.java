@@ -4,6 +4,7 @@ public class Actions {
 
 	private static final Action FOLD_ACTION = new FoldAction();
 	private static final Action NONE_ACTION = new NoneAction(); 
+	private static final Action CHECK_ACTION = new CheckAction();
 	
 	public static Action getCallAction(long callValue) {
 		return new CallAction(callValue);
@@ -19,6 +20,14 @@ public class Actions {
 	
 	public static Action getNoneAction() {
 		return NONE_ACTION;
+	}
+	
+	public static Action getCheckAction() {
+		return CHECK_ACTION;
+	}
+	
+	public static Action getAllInAction(long allInValue, long callValue) {
+		return new AllInAction(allInValue, callValue);
 	}
 	
 	
@@ -42,7 +51,8 @@ public class Actions {
 			return callValue;
 		}
 		
-		public long getRelativeMoveValue() {
+		@Override
+		public float getRelativeMoveValue() {
 			return 1;
 		}
 		
@@ -70,9 +80,9 @@ public class Actions {
 			return raiseValue;
 		}
 		@Override
-		public long getRelativeMoveValue() {
+		public float getRelativeMoveValue() {
 			// TODO Auto-generated method stub
-			return raiseValue / callValue;
+			return (float)raiseValue / callValue;
 		}
 		
 		@Override
@@ -96,7 +106,7 @@ public class Actions {
 		}
 
 		@Override
-		public long getRelativeMoveValue() {
+		public float getRelativeMoveValue() {
 			// TODO Auto-generated method stub
 			return 0;
 		}
@@ -123,7 +133,7 @@ public class Actions {
 		}
 
 		@Override
-		public long getRelativeMoveValue() {
+		public float getRelativeMoveValue() {
 			// TODO Auto-generated method stub
 			throw new IllegalStateException("No value for none move");
 		}
@@ -133,4 +143,64 @@ public class Actions {
 			return "None";
 		}
 	}
+	
+	private static class CheckAction implements Action {
+		
+		
+		@Override
+		public ActionType getActionType() {
+			return ActionType.CHECK;
+		}
+
+		@Override
+		public long getMoveValue() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public float getRelativeMoveValue() {
+			// TODO Auto-generated method stub
+			throw new IllegalStateException("Not possible to relativize check value");
+		}
+		
+		@Override
+		public String toString() {
+			return "Checked";
+		}
+	}
+	
+	private static class AllInAction implements Action {
+		
+		long allInValue;
+		long callValue;
+		
+		public AllInAction(long allInValue, long callValue) {
+			this.allInValue = allInValue;
+			this.callValue = callValue;
+		}
+		
+		@Override
+		public ActionType getActionType() {
+			return ActionType.ALLIN;
+		}
+
+		@Override
+		public long getMoveValue() {
+			// TODO Auto-generated method stub
+			return allInValue;
+		}
+
+		@Override
+		public float getRelativeMoveValue() {
+			// TODO Auto-generated method stub
+			return (allInValue / (float)callValue);
+		}
+		
+		@Override
+		public String toString() {
+			return "All in for " + getMoveValue() + " chips";
+		}
+	}
+	
 }

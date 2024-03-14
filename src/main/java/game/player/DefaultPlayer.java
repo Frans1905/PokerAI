@@ -1,6 +1,10 @@
 package game.player;
 
+import game.Game;
 import game.actions.Action;
+import game.actions.Actions;
+import game.cards.CardPair;
+import game.environment.Environment;
 
 public class DefaultPlayer implements Player{
 
@@ -8,21 +12,37 @@ public class DefaultPlayer implements Player{
 	private String name;
 	private long chipCount;
 	private Action lastAction;
+	private long betChipCount;
+	
+	private CardPair cards;
+	
+	private Environment env;
 	
 	public DefaultPlayer() {
-		this("anonymous");
+		this("anonymous", null);
 	}
+
 	
-	public DefaultPlayer(String name) {
+	public DefaultPlayer(String name, Environment env) {
 		this.name = name;
 		chipCount = STARTING_CHIP_COUNT;
-		this.lastAction = null;
+		this.env = env;
+		setUpPlayerForNewRound();
+	}
+	
+	public void setUpPlayerForNewRound() {
+		this.lastAction = Actions.getNoneAction();
+		this.betChipCount = 0;
 	}
 	
 	@Override
-	public Action getPlayerAction() {
+	public Action getPlayerAction(Game game) {
 		// TODO Auto-generated method stub
-		return null;
+		Action act = env.getInput(game);
+		setBetChipCount(act.getMoveValue());
+		setLastAction(act);
+		return act;
+		
 	}
 
 	@Override
@@ -51,6 +71,51 @@ public class DefaultPlayer implements Player{
 	public void setLastAction(Action action) {
 		// TODO Auto-generated method stub
 		lastAction = action;
+	}
+
+	@Override
+	public long takeBetChips() {
+		// TODO Auto-generated method stub
+		long amount = takeChips(betChipCount);
+		setBetChipCount(0);
+		return amount;
+	}
+	
+	public void setBetChipCount(long amount) {
+		betChipCount = amount;
+	}
+	
+	@Override
+	public long getBetChipCount() {
+		return betChipCount;
+	}
+
+	@Override
+	public long takeSmallBlind(long smallBlind) {
+		// TODO Auto-generated method stub
+		betChipCount = chipCount < smallBlind ? chipCount : smallBlind;
+		return betChipCount;
+	}
+
+	@Override
+	public long takeBigBlind(long smallBlind) {
+		// TODO Auto-generated method stub
+		betChipCount = chipCount < smallBlind * 2 ? chipCount : smallBlind * 2;
+		return betChipCount;
+	}
+
+
+	@Override
+	public void setCards(CardPair pair) {
+		// TODO Auto-generated method stub
+		cards = pair;
+	}
+
+
+	@Override
+	public CardPair getCards() {
+		// TODO Auto-generated method stub
+		return cards;
 	}
 
 }

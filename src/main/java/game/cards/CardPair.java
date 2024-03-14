@@ -12,7 +12,7 @@ public class CardPair {
 		card2 = c2;
 	}
 	
-	public List<Card> getCards() {
+	public List<Card> getCardList() {
 		return List.of(card1, card2);
 	}
 	
