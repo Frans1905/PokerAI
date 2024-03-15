@@ -2,6 +2,7 @@ package game.player;
 
 import game.Game;
 import game.actions.Action;
+import game.actions.ActionType;
 import game.actions.Actions;
 import game.cards.CardPair;
 import game.environment.Environment;
@@ -39,7 +40,10 @@ public class DefaultPlayer implements Player{
 	public Action getPlayerAction(Game game) {
 		// TODO Auto-generated method stub
 		Action act = env.getInput(game);
-		setBetChipCount(act.getMoveValue());
+		if (act.getActionType() == ActionType.CALL || 
+			act.getActionType() == ActionType.RAISE) {
+			setBetChipCount(act.getMoveValue());
+		}
 		setLastAction(act);
 		return act;
 		

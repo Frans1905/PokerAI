@@ -110,7 +110,7 @@ public class Game {
 	
 	public boolean handleAction(Action curAction) {
 		if (curAction.getActionType() == ActionType.FOLD) {
-			activePlayers.remove(numCurrentPlayer);
+			activePlayers.remove(players.get(numCurrentPlayer));
 		}
 		if (curAction.getActionType() != ActionType.RAISE &&
 				checkPastActions()) {

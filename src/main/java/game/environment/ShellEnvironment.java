@@ -26,8 +26,6 @@ public class ShellEnvironment implements Environment {
 		
 		drawState(game);
 
-		
-		
 		Player curPlayer = game.getPlayers().get(curPlayerIndex);
 		long callValue = game.getCallChipCount();
 
@@ -77,7 +75,7 @@ public class ShellEnvironment implements Environment {
 
 	private Action handleCheckRaiseFoldCase(long callValue) {
 		// TODO Auto-generated method stub
-		System.out.println("(Check/Raise/Fold): ");
+		System.out.print("(Check/Raise/Fold): ");
 		Action action = null;
 		while(true) {
 			String input = sc.nextLine();
@@ -87,6 +85,10 @@ public class ShellEnvironment implements Environment {
 			}
 			else if(input.equalsIgnoreCase("Raise")) {
 				action = handleRaise(callValue);
+				break;
+			}
+			else if(input.equalsIgnoreCase("Fold")) {
+				action = handleFold();
 				break;
 			}
 			System.out.println("Invalid input: " + input);
@@ -99,7 +101,7 @@ public class ShellEnvironment implements Environment {
 
 	private Action handleAllInFoldCase(long callValue, Player curPlayer) {
 		// TODO Auto-generated method stub
-		System.out.println("(AllIn/Fold): ");
+		System.out.print("(AllIn/Fold): ");
 		Action action = null;
 		while (true) {
 			String input = sc.nextLine();

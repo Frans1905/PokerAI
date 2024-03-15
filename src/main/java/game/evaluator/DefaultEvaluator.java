@@ -16,7 +16,10 @@ public class DefaultEvaluator implements Evaluator {
 	@Override
 	public Map<Player, Long> evaluatePlayers() {
 		// TODO Auto-generated method stub
-		return null;
+		Long potChipCount = game.getPotChipCount();
+		for (Player p : game.getActivePlayers()) {
+			
+		}
 	}
 
 }
