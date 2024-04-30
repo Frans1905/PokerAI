@@ -1,5 +1,7 @@
 package game.actions;
 
+import game.player.Player;
+
 public class Actions {
 
 	private static final Action FOLD_ACTION = new FoldAction();
@@ -60,6 +62,12 @@ public class Actions {
 		public String toString() {
 			return "Called for " + callValue + " chips";
 		}
+
+		@Override
+		public boolean isValid(Player curPlayer) {
+			// TODO Auto-generated method stub
+			return true;
+		}
 	}
 	
 	private static class RaiseAction implements Action {
@@ -89,6 +97,15 @@ public class Actions {
 		public String toString() {
 			return "Raised to " + raiseValue + " chips";
 		}
+		@Override
+		public boolean isValid(Player curPlayer) {
+			// TODO Auto-generated method stub
+			if (this.getMoveValue() > curPlayer.getChipCount() ||
+					this.getRelativeMoveValue() <= 1) {
+				return false;
+			}
+			return true;
+		}
 	}
 	
 	private static class FoldAction implements Action {
@@ -114,6 +131,12 @@ public class Actions {
 		@Override
 		public String toString() {
 			return "Folded";
+		}
+
+		@Override
+		public boolean isValid(Player curPlayer) {
+			// TODO Auto-generated method stub
+			return true;
 		}
 		
 	}
@@ -142,6 +165,12 @@ public class Actions {
 		public String toString() {
 			return "None";
 		}
+
+		@Override
+		public boolean isValid(Player curPlayer) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 	}
 	
 	private static class CheckAction implements Action {
@@ -167,6 +196,12 @@ public class Actions {
 		@Override
 		public String toString() {
 			return "Checked";
+		}
+
+		@Override
+		public boolean isValid(Player curPlayer) {
+			// TODO Auto-generated method stub
+			return true;
 		}
 	}
 	
@@ -200,6 +235,12 @@ public class Actions {
 		@Override
 		public String toString() {
 			return "All in for " + getMoveValue() + " chips";
+		}
+
+		@Override
+		public boolean isValid(Player curPlayer) {
+			// TODO Auto-generated method stub
+			return true;
 		}
 	}
 	

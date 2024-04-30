@@ -10,6 +10,7 @@
 
   <!-- configuration of basic properties -->
   <properties>
+    <JmpHandEvaluator-systemPath>C:\Users\frans\PokerAI\src\main\resources\lib\JmpPokerHandEvaluator.jar</JmpHandEvaluator-systemPath>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>15</maven.compiler.source>
@@ -34,8 +35,15 @@
     	<groupId>org.mockito</groupId>
     	<artifactId>mockito-junit-jupiter</artifactId>
     	<version>5.11.0</version>
-    <scope>test</scope>
-</dependency>
+    	<scope>test</scope>
+	</dependency>
+    <dependency>
+        <groupId>poker</groupId>
+        <artifactId>JmpHandEvaluator</artifactId>
+        <version>1.0</version>
+        <scope>system</scope>
+        <systemPath>${JmpHandEvaluator-systemPath}</systemPath>
+    </dependency>
   </dependencies>
 
 </project>

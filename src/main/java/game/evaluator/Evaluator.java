@@ -6,5 +6,5 @@ import game.player.Player;
 
 public interface Evaluator {
 
-	public Map<Player, Long> evaluatePlayers();
+	public Map<Player, Integer> evaluatePlayers();
 }

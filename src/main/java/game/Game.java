@@ -101,10 +101,10 @@ public class Game {
 				break;
 			}
 		}
-		Map<Player, Long> results = evaluator.evaluatePlayers();
-		for (Entry<Player, Long> e : results.entrySet()) {
-			e.getKey().giveChips(e.getValue());
-		}
+		Map<Player, Integer> strengthResults = evaluator.evaluatePlayers();
+		Map<Player, Long> winnings = dealer.divideChipsFromPot(strengthResults, this.getPotChipCount());
+		env.updateResults(this, winnings);
+		
 		readyForRound = false;
 	}
 	

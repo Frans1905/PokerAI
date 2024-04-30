@@ -1,6 +1,7 @@
 package game.environment;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +46,10 @@ public class ShellEnvironment implements Environment {
 			}
 			else {
 				action = handleCallRaiseFoldCase(callValue);
+			}
+			
+			if (!action.isValid(curPlayer)) {
+				continue;
 			}
 		}
 		drawBorder();
@@ -299,5 +304,18 @@ public class ShellEnvironment implements Environment {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void updateResults(Game game, Map<Player, Long> winnings) {
+		// TODO Auto-generated method stub
+		List<Player> players = game.getPlayers();
+		for (int i = 0; i < players.size(); i++) {
+			if (winnings.containsKey(players.get(i))) {
+				System.out.printf("Player %d: won %l chips\n", i + 1, winnings.get(players.get(i)));
+			}
+		}
+		
+		drawBorder();
 	}
 }

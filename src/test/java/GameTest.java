@@ -100,7 +100,7 @@ class GameTest {
 		
 		assertEquals(3, game.getPlayers().size());
 		assertEquals(190, game.getPotChipCount());
-		assertEquals(1, game.getNumCurrentPlayer());
+		assertEquals(-1, game.getNumCurrentPlayer());
 		assertEquals(0, game.getNumSmallBlindPlayer());
 		assertEquals(2, game.getActivePlayers().size());
 		assertEquals(0, game.getCallChipCount());
