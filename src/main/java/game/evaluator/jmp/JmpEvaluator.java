@@ -22,17 +22,20 @@ public class JmpEvaluator implements Evaluator {
 			entry(CardSuit.HEARTS, 0x2000),
 			entry(CardSuit.SPADES, 0x1000));
 	
-	Game game;
 	
-	public JmpEvaluator(Game game) {
-		this.game= game;
+	public JmpEvaluator() {
+
 	}
 	
 	@Override
-	public Map<Player, Integer> evaluatePlayers() {
+	public Map<Player, Integer> evaluatePlayers(Game game) {
 		// TODO Auto-generated method stub
 		Map<Player, Integer> map = new HashMap<>();
-		for (Player p : game.getActivePlayers()) {
+		for (Player p : game.getPlayers()) {
+			if (!game.getActivePlayers().contains(p)) {
+				map.put(p, Integer.MAX_VALUE);
+				continue;
+			}
 			int value = findStrongestCombination(p.getCards(), game.getCardsOnBoard());
 			map.put(p, value);
 		}
@@ -43,28 +46,36 @@ public class JmpEvaluator implements Evaluator {
 		// TODO Auto-generated method stub
 		List<game.evaluator.jmp.Card> jmpCardsOnBoard = cardsOnBoard.stream().map((c) -> 
 			new game.evaluator.jmp.Card(c.getValue() - 2, SUIT_MAP.get(c.getSuit()))).toList();
-		game.evaluator.jmp.Card[] jmpCards = (game.evaluator.jmp.Card[]) cards.getCardList().stream().map((c) -> 
-			new game.evaluator.jmp.Card(c.getValue() - 2, SUIT_MAP.get(c.getSuit()))).toArray();
+		game.evaluator.jmp.Card[] jmpCards = new game.evaluator.jmp.Card[7];
+		jmpCards[0] = new game.evaluator.jmp.Card(cards.getFirstCard().getValue() - 2, 
+				SUIT_MAP.get(cards.getFirstCard().getSuit()));
+		jmpCards[1] = new game.evaluator.jmp.Card(cards.getSecondCard().getValue() - 2, 
+				SUIT_MAP.get(cards.getSecondCard().getSuit()));
+		for (int i = 2; i < 7; i++) {
+			Card c = cardsOnBoard.get(i - 2);
+			jmpCards[i] = new game.evaluator.jmp.Card(c.getValue() - 2, 
+					SUIT_MAP.get(c.getSuit()));
+		}
 		
-		int max = 0;
+		int min = Integer.MAX_VALUE;
 		
-		for (int i = 0; i < jmpCardsOnBoard.size() - 2; i++) {
-			for (int j = i + 1; j < jmpCardsOnBoard.size() - 1; j++) {
-				for (int k = j + 1; k < jmpCardsOnBoard.size(); k++) {
-					game.evaluator.jmp.Card[] cardArr = Arrays.copyOf(jmpCards, 5);
-					cardArr[2] = jmpCardsOnBoard.get(i);
-					cardArr[3] = jmpCardsOnBoard.get(j);
-					cardArr[4] = jmpCardsOnBoard.get(k);
-					int value = Hand.evaluate(cardArr);
-					if (value > max) {
-						max = value;
+		for (int i = 0; i < 6; i++) {
+			for (int j = i + 1; j < 7; j++) {
+				int index = 0;
+				game.evaluator.jmp.Card[] cardArr = new game.evaluator.jmp.Card[5]; 
+				for (int k = 0; k < 7; k++) {
+					if (k != i && k != j) {
+						cardArr[index++] = jmpCards[k];
 					}
-					
+				}
+				int value = Hand.evaluate(cardArr);
+				if (value < min) {
+					min = value;
 				}
 			}
 		}
 		
-		return max;
+		return min;
 	}
 
 }

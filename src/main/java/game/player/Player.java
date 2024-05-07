@@ -37,4 +37,5 @@ public interface Player {
 	long takeBetChips();
 	long getBetChipCount();
 	String getPlayerName();
+	Long getTotalBetChipCount();
 }

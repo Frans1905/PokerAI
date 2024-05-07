@@ -49,11 +49,12 @@ public class Dealer {
 		Map<Player, Long> winnings = new HashMap<>();
 		List<Player> maxPlayers = new LinkedList<>();
 		for (Entry<Player, Integer> entry : strengthResults.entrySet()) {
-			for (int i = 0; i < maxPlayers.size(); i++) {
-				if (i == maxPlayers.size() - 1) {
+			for (int i = 0; i <= maxPlayers.size(); i++) {
+				if (i == maxPlayers.size()) {
 					maxPlayers.add(entry.getKey());
+					break;
 				}
-				else if (strengthResults.get(maxPlayers.get(i)) < entry.getValue()) {
+				else if (strengthResults.get(maxPlayers.get(i)) > entry.getValue()) {
 					maxPlayers.add(i, entry.getKey());
 					break;
 				}
@@ -63,7 +64,7 @@ public class Dealer {
 		int index = 0;
 		List<Long> values = new LinkedList<>();
 		for (int i = 0; i < maxPlayers.size(); i++) {
-			values.add(maxPlayers.get(i).getBetChipCount());
+			values.add(maxPlayers.get(i).getTotalBetChipCount());
 		}
 
 		while (potChipCount > 0) {
@@ -73,7 +74,8 @@ public class Dealer {
 			profitPlayers.add(p);
 			long min = Long.MAX_VALUE;
 
-			while (strengthResults.get(p) == strengthResults.get(maxPlayers.get(index))) {
+			while (index < maxPlayers.size() &&
+					strengthResults.get(p) == strengthResults.get(maxPlayers.get(index))) {
 				min = Long.min(min, values.get(index));
 				profitPlayers.add(maxPlayers.get(index++));
 			}

@@ -101,7 +101,7 @@ public class Actions {
 		public boolean isValid(Player curPlayer) {
 			// TODO Auto-generated method stub
 			if (this.getMoveValue() > curPlayer.getChipCount() ||
-					this.getRelativeMoveValue() <= 1) {
+					this.getRelativeMoveValue() < 2) {
 				return false;
 			}
 			return true;

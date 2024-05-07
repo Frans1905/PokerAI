@@ -38,12 +38,13 @@ public class Game {
 		
 	boolean readyForRound;
 	
-	public Game(List<Player> players, Environment env) {
+	public Game(List<Player> players, Environment env, Evaluator ev) {
 		if (players.size() > 10 || players.size() < 2) {
 			throw new IllegalStateException("Expected number of players between"
 					+ "10 and 2");
 		}
 		this.env = env;
+		this.evaluator = ev;
 		resetGame(players);
 	}
 
@@ -61,8 +62,6 @@ public class Game {
 		cardsOnBoard = new ArrayList<>(5);
 		
 		this.dealer = new Dealer();
-		
-		this.evaluator = new DefaultEvaluator(this);
 		
 		readyForRound = false;
 	}
@@ -101,7 +100,7 @@ public class Game {
 				break;
 			}
 		}
-		Map<Player, Integer> strengthResults = evaluator.evaluatePlayers();
+		Map<Player, Integer> strengthResults = evaluator.evaluatePlayers(this);
 		Map<Player, Long> winnings = dealer.divideChipsFromPot(strengthResults, this.getPotChipCount());
 		env.updateResults(this, winnings);
 		

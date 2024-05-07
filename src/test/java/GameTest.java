@@ -13,6 +13,8 @@ import game.Game;
 import game.actions.Action;
 import game.environment.Environment;
 import game.environment.ShellEnvironment;
+import game.evaluator.Evaluator;
+import game.evaluator.jmp.JmpEvaluator;
 import game.player.Player;
 import game.player.stub.CallPlayer;
 import game.player.stub.FoldPlayer;
@@ -33,8 +35,9 @@ class GameTest {
 		raisePlayer = new RaisePlayer();
 		
 		Environment env = new ShellEnvironment();
+		Evaluator ev = new JmpEvaluator();
 
-		game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), env);
+		game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), env, ev);
 		
 	}
 	
@@ -46,8 +49,9 @@ class GameTest {
 	@Test
 	void testGameConstructor() {
 		Environment env = new ShellEnvironment();
+		Evaluator ev = new JmpEvaluator();
 		assertDoesNotThrow(() -> {
-			Game game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), env);
+			Game game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), env, ev);
 		});
 		assertEquals(Game.DEFAULT_SMALL_BLIND, game.getSmallBlind());
 		assertEquals(3, game.getPlayers().size());

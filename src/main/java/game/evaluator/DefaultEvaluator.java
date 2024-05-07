@@ -10,14 +10,12 @@ import game.player.Player;
 
 public class DefaultEvaluator implements Evaluator {
 
-	private Game game;
 	
 	public DefaultEvaluator(Game game) {
-		this.game = game;
 	}
 	
 	@Override
-	public Map<Player, Integer> evaluatePlayers() {
+	public Map<Player, Integer> evaluatePlayers(Game game) {
 		// TODO Auto-generated method stub
 		Long potChipCount = game.getPotChipCount();
 		for (Player p : game.getActivePlayers()) {

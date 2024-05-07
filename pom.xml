@@ -30,19 +30,24 @@
     	<artifactId>mockito-core</artifactId>
     	<version>5.11.0</version>
     	<scope>test</scope>
-	</dependency>
-	<dependency>
+	  </dependency>
+	  <dependency>
     	<groupId>org.mockito</groupId>
     	<artifactId>mockito-junit-jupiter</artifactId>
     	<version>5.11.0</version>
     	<scope>test</scope>
-	</dependency>
+	  </dependency>
     <dependency>
-        <groupId>poker</groupId>
-        <artifactId>JmpHandEvaluator</artifactId>
-        <version>1.0</version>
-        <scope>system</scope>
-        <systemPath>${JmpHandEvaluator-systemPath}</systemPath>
+      <groupId>poker</groupId>
+      <artifactId>JmpHandEvaluator</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${JmpHandEvaluator-systemPath}</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.nd4j</groupId>
+      <artifactId>nd4j-api</artifactId>
+      <version>1.0.0-M2.1</version>
     </dependency>
   </dependencies>
 

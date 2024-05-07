@@ -14,6 +14,7 @@ public class DefaultPlayer implements Player{
 	private long chipCount;
 	private Action lastAction;
 	private long betChipCount;
+	private long totalBetChipCount;
 	
 	private CardPair cards;
 	
@@ -34,6 +35,7 @@ public class DefaultPlayer implements Player{
 	public void setUpPlayerForNewRound() {
 		this.lastAction = Actions.getNoneAction();
 		this.betChipCount = 0;
+		this.totalBetChipCount = 0;
 	}
 	
 	@Override
@@ -81,12 +83,17 @@ public class DefaultPlayer implements Player{
 	public long takeBetChips() {
 		// TODO Auto-generated method stub
 		long amount = takeChips(betChipCount);
+		setTotalBetChipCount(totalBetChipCount + amount);
 		setBetChipCount(0);
 		return amount;
 	}
 	
 	public void setBetChipCount(long amount) {
 		betChipCount = amount;
+	}
+	
+	public void setTotalBetChipCount(long amount) {
+		totalBetChipCount = amount;
 	}
 	
 	@Override
@@ -120,6 +127,13 @@ public class DefaultPlayer implements Player{
 	public CardPair getCards() {
 		// TODO Auto-generated method stub
 		return cards;
+	}
+
+
+	@Override
+	public Long getTotalBetChipCount() {
+		// TODO Auto-generated method stub
+		return totalBetChipCount;
 	}
 
 }

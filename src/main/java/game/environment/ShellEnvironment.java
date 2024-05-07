@@ -1,5 +1,6 @@
 package game.environment;
 
+import static java.util.Map.entry;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -10,11 +11,19 @@ import game.actions.Action;
 import game.actions.ActionType;
 import game.actions.Actions;
 import game.cards.Card;
+import game.cards.CardPair;
+import game.cards.CardSuit;
 import game.player.Player;
 
 public class ShellEnvironment implements Environment {
 
 	private Scanner sc;
+	
+	private static final Map<CardSuit, String> SYMBOL_MAP = Map.ofEntries(
+			entry(CardSuit.CLUBS, "♣"),
+			entry(CardSuit.DIAMONDS, "♦"),
+			entry(CardSuit.HEARTS, "♥"),
+			entry(CardSuit.SPADES, "♠"));
 
 	public ShellEnvironment() {
 		sc = new Scanner(System.in);
@@ -24,7 +33,7 @@ public class ShellEnvironment implements Environment {
 	public Action getInput(Game game) {
 		// TODO Auto-generated method stub
 		int curPlayerIndex = game.getNumCurrentPlayer();
-		
+
 		drawState(game);
 
 		Player curPlayer = game.getPlayers().get(curPlayerIndex);
@@ -47,8 +56,10 @@ public class ShellEnvironment implements Environment {
 			else {
 				action = handleCallRaiseFoldCase(callValue);
 			}
-			
+
 			if (!action.isValid(curPlayer)) {
+				System.out.println("Invalid input");
+				action = null;
 				continue;
 			}
 		}
@@ -65,7 +76,7 @@ public class ShellEnvironment implements Environment {
 		drawPlayerActions(game);
 
 		System.out.println("Your chip stack size: " + (curPlayer.getChipCount() - curPlayer.getBetChipCount()) + " chips");
-		
+
 		System.out.println("Hand:");
 		drawCards(curPlayer.getCards().getCardList());
 	}
@@ -163,18 +174,15 @@ public class ShellEnvironment implements Environment {
 				continue;
 			}
 		}
-		System.out.println("Raised to " + Long.toString(raiseValue) + " chips");
 		return Actions.getRaiseAction(callValue, raiseValue);
 	}
 
 	private Action handleFold() {
-		System.out.println("Folded");
 		return Actions.getFoldAction();
 	}
 
 	private Action handleCall(long callValue) {
 		// TODO Auto-generated method stub
-		System.out.println("Called for " + Long.toString(callValue) + " chips");
 		return Actions.getCallAction(callValue);
 	}
 
@@ -225,27 +233,37 @@ public class ShellEnvironment implements Environment {
 		// TODO Auto-generated method stub
 		/*	 
 		 _____
-		|     |
+		|♠    |
 		|	  |
 		|  K  |
 		|	  |
 		|_____|
-
+			
 		 */
 
+		drawTop(cardsOnBoard);
+		drawEdges(cardsOnBoard.size(), 1);
+
+		drawCenter(cardsOnBoard);
+
+		drawEdges(cardsOnBoard.size(), 1);
+		drawBottom(cardsOnBoard);
+		
+		System.out.println("");
+
+	}
+
+	private void drawBottom(List<Card> cardsOnBoard) {
+		// TODO Auto-generated method stub
 		for (int i = 0; i < cardsOnBoard.size(); i++) {
-			System.out.print(" _____ ");
+			System.out.print("|_____|");
 			System.out.print(" ");
 		}
-
 		System.out.println();
+	}
 
-		for (int i = 0; i < 2; i++) {
-			drawEdges(cardsOnBoard.size());
-			System.out.println();
-
-		}
-
+	private void drawCenter(List<Card> cardsOnBoard) {
+		// TODO Auto-generated method stub
 		for (int i = 0; i < cardsOnBoard.size(); i++) {
 			System.out.print("|  ");
 			if (cardsOnBoard.get(i).getValue() > 9) {
@@ -258,23 +276,31 @@ public class ShellEnvironment implements Environment {
 			System.out.print(" ");
 		}
 		System.out.println();
+	}
 
-
-		drawEdges(cardsOnBoard.size());
-		System.out.println();
-
+	private void drawTop(List<Card> cardsOnBoard) {
 		for (int i = 0; i < cardsOnBoard.size(); i++) {
-			System.out.print("|_____|");
+			System.out.print(" _____ ");
 			System.out.print(" ");
 		}
 		System.out.println();
+		
+		for (int i = 0; i < cardsOnBoard.size(); i++) {
+			System.out.print("|");
+			System.out.print(SYMBOL_MAP.get(cardsOnBoard.get(i).getSuit()));
+			System.out.print("    | ");
+		}
+		System.out.println();
 	}
-
-	private void drawEdges(int size) {
+	
+	private void drawEdges(int size, int count) {
 		// TODO Auto-generated method stub
-		for (int i = 0; i < size; i++) {
-			System.out.print("|     |");
-			System.out.print(" ");
+		for (int j = 0; j < count; j++) {	
+			for (int i = 0; i < size; i++) {
+				System.out.print("|     |");
+				System.out.print(" ");
+			}
+			System.out.println();
 		}
 	}
 
@@ -309,13 +335,35 @@ public class ShellEnvironment implements Environment {
 	@Override
 	public void updateResults(Game game, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
-		List<Player> players = game.getPlayers();
+		
+		System.out.println("Drawn cards:");
+		drawCards(game.getCardsOnBoard());
+		
+		List<Player> players = game.getActivePlayers();
+		for (int i = 0; i < players.size(); i++) {
+			CardPair pair = players.get(i).getCards();
+			System.out.printf("Player %d cards:\n", i + 1);
+			drawCardPair(pair);
+		}
 		for (int i = 0; i < players.size(); i++) {
 			if (winnings.containsKey(players.get(i))) {
-				System.out.printf("Player %d: won %l chips\n", i + 1, winnings.get(players.get(i)));
+				System.out.printf("Player %d: won %d chips\n", i + 1, winnings.get(players.get(i)));
 			}
 		}
-		
+
 		drawBorder();
+	}
+
+	private void drawCardPair(CardPair pair) {
+		// TODO Auto-generated method stub
+		drawTop(pair.getCardList());
+		drawEdges(2, 1);
+		
+		drawCenter(pair.getCardList());
+		
+		drawEdges(2, 1);
+		drawBottom(pair.getCardList());
+		System.out.println("");
+		
 	}
 }
