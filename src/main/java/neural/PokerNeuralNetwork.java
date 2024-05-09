@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-import neural.crossing.CrossingAlgorithm;
-import neural.mutation.MutationAlgorithm;
 import neural.randomizer.Randomizer;
 import neural.util.INeuralNetworkParams;
 
