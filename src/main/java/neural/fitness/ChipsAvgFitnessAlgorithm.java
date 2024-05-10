@@ -15,10 +15,11 @@ import game.player.DefaultPlayer;
 import game.player.Player;
 import neural.NeuralNetwork;
 
-public class CashAvgFitnessAlgorithm implements FitnessAlgorithm {
+public class ChipsAvgFitnessAlgorithm implements FitnessAlgorithm {
 
+	FitnessTracker tracker;
 	private List<NeuralNetwork> neuralnets;
-	private Map<NeuralNetwork, Integer> fitnesses;
+	private Map<NeuralNetwork, Float> fitnesses;
 	private Game game;
 	private int roundLimit;
 	private int numberOfMatches;
@@ -28,16 +29,17 @@ public class CashAvgFitnessAlgorithm implements FitnessAlgorithm {
 	private static final int DEFAULT_PLAYERS_PER_TABLE = 5;
 
 	
-	public CashAvgFitnessAlgorithm(int roundLimit, int numberOfMatches, int playersPerTable) {
+	public ChipsAvgFitnessAlgorithm(int roundLimit, int numberOfMatches, int playersPerTable) {
+		this.tracker = new FitnessTracker();
 		this.roundLimit = roundLimit;
 		this.numberOfMatches = numberOfMatches;
 		this.numOfPlayersPerTable = playersPerTable;
-		this.fitnesses = new HashMap<NeuralNetwork, Integer>();
+		this.fitnesses = new HashMap<NeuralNetwork, Float>();
 		this.neuralnets = new ArrayList<>();
 		this.game = new Game(new JmpEvaluator());
 	}
 	
-	public CashAvgFitnessAlgorithm() {
+	public ChipsAvgFitnessAlgorithm() {
 		this(DEFAULT_ROUND_LIMIT, DEFAULT_MATCH_NUMBER, DEFAULT_PLAYERS_PER_TABLE);
 	}
 		
@@ -51,17 +53,19 @@ public class CashAvgFitnessAlgorithm implements FitnessAlgorithm {
 	}
 
 	@Override
-	public Map<NeuralNetwork, Integer> calculateFitness() {
+	public Map<NeuralNetwork, Float> calculateFitness() {
 		// TODO Auto-generated method stub
 		if (neuralnets.size() % this.numOfPlayersPerTable != 0) {
 			throw new IllegalStateException("Collection of neural nets to be calculated must be a multiple of 5");
 		}
-		Map<NeuralNetwork, Integer> fitnessMap = new HashMap<>();
+		Map<NeuralNetwork, Float> fitnessMap = new HashMap<>();
 		for (int i = 0; i < numberOfMatches; i++) {
 			List<List<Player>> tables = arrangeTables();
 			playAllGames(tables);
 		}
-		return null;
+		this.fitnesses = tracker.getFitnesses();
+		tracker.reset();
+		return this.fitnesses;
 	}
 
 	private void playAllGames(List<List<Player>> tables) {
@@ -69,10 +73,11 @@ public class CashAvgFitnessAlgorithm implements FitnessAlgorithm {
 		for (List<Player> list : tables) {
 			game.resetGame(list);
 			
-			for (int i = 0; i < roundLimit; i++) {
+			for (int i = 0; i < roundLimit && !game.isOver(); i++) {
 				game.setupNewRound();
 				game.playRound();
 			}
+			game.endMatch();
 		}
 	}
 
@@ -90,7 +95,7 @@ public class CashAvgFitnessAlgorithm implements FitnessAlgorithm {
 				}
 				NeuralNetwork net = neuralnets.get(index);
 				netsInPlay.add(net);
-				Environment env = new NeuralNetworkEnvironment(net);
+				Environment env = new NeuralNetworkEnvironment(net, tracker);
 				Player p = new DefaultPlayer("neural", env);
 				table.add(p);
 			}
@@ -100,9 +105,9 @@ public class CashAvgFitnessAlgorithm implements FitnessAlgorithm {
 	}
 
 	@Override
-	public Map<NeuralNetwork, Integer> getFitnesses() {
+	public Map<NeuralNetwork, Float> getFitnesses() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.fitnesses;
 	}
 
 }

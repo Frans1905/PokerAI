@@ -248,7 +248,7 @@ public class ShellPlayerEnvironment implements Environment {
 
 		drawEdges(cardsOnBoard.size(), 1);
 		drawBottom(cardsOnBoard);
-		
+
 		System.out.println("");
 
 	}
@@ -364,6 +364,12 @@ public class ShellPlayerEnvironment implements Environment {
 		drawEdges(2, 1);
 		drawBottom(pair.getCardList());
 		System.out.println("");
+		
+	}
+
+	@Override
+	public void updateEnd(Game game, int numCurrentPlayer) {
+		// TODO Auto-generated method stub
 		
 	}
 }

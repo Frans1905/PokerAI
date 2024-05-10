@@ -24,7 +24,7 @@ public class Game {
 	
 	private List<Card> cardsOnBoard;
 
-	
+	private int numOfBrokePlayers;
 	private int numCurrentPlayer;
 	private int numSmallBlindPlayer;
 	
@@ -68,6 +68,7 @@ public class Game {
 					+ "8 and 2");
 		}
 		numSmallBlindPlayer++;
+		numOfBrokePlayers = 0;
 		numCurrentPlayer = numSmallBlindPlayer;	
 		activePlayers.clear();
 		activePlayers.addAll(players);
@@ -110,6 +111,9 @@ public class Game {
 	private void updatePlayerResult(Game game, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
 		for (Player p : this.getPlayers()) {
+			if (p.getChipCount() == 0) {
+				numOfBrokePlayers++;
+			}
 			p.getEnvironment().updateResults(this, winnings);
 		}
 
@@ -289,5 +293,16 @@ public class Game {
 			throw new IllegalStateException("Game cannot have more than 8 players");
 		}
 		this.players.add(p);
+	}
+
+	public boolean isOver() {
+		// TODO Auto-generated method stub
+		return numOfBrokePlayers == 4;
+	}
+	
+	public void endMatch() {
+		for (int i = 0; i < this.getPlayers().size(); i++) {
+			this.getPlayers().get(i).getEnvironment().updateEnd(this, i);
+		}
 	}
 }

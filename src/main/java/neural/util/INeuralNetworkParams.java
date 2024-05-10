@@ -1,8 +1,8 @@
 package neural.util;
 
+import neural.activation.ActivationFunction;
 import neural.crossing.CrossingAlgorithm;
 import neural.mutation.MutationAlgorithm;
-import neural.transformation.ActivationFunction;
 
 public interface INeuralNetworkParams {
 

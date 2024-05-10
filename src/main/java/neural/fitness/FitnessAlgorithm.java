@@ -6,6 +6,6 @@ import neural.NeuralNetwork;
 
 public interface FitnessAlgorithm {
 	void addNetwork(NeuralNetwork net);
-	Map<NeuralNetwork, Integer> calculateFitness();
-	Map<NeuralNetwork, Integer> getFitnesses();
+	Map<NeuralNetwork, Float> calculateFitness();
+	Map<NeuralNetwork, Float> getFitnesses();
 }

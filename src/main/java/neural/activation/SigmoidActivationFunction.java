@@ -1,4 +1,4 @@
-package neural.transformation;
+package neural.activation;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
