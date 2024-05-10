@@ -15,7 +15,7 @@ import game.cards.CardPair;
 import game.cards.CardSuit;
 import game.player.Player;
 
-public class ShellEnvironment implements Environment {
+public class ShellPlayerEnvironment implements Environment {
 
 	private Scanner sc;
 	
@@ -25,7 +25,7 @@ public class ShellEnvironment implements Environment {
 			entry(CardSuit.HEARTS, "♥"),
 			entry(CardSuit.SPADES, "♠"));
 
-	public ShellEnvironment() {
+	public ShellPlayerEnvironment() {
 		sc = new Scanner(System.in);
 	}
 

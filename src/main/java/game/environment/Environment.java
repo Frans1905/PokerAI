@@ -12,9 +12,9 @@ public interface Environment {
 
 	public Action getInput(Game game);
 
-	public void updatePlayerAction(Action curAction, int numCurrentPlayer);
+	void updatePlayerAction(Action curAction, int numCurrentPlayer);
 	
-	public void updateBoard(List<Card> drawnCards);
+	void updateBoard(List<Card> drawnCards);
 
-	public void updateResults(Game game, Map<Player, Long> winnings);
+	void updateResults(Game game, Map<Player, Long> winnings);
 }

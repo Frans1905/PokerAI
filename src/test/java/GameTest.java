@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import game.Game;
 import game.actions.Action;
 import game.environment.Environment;
-import game.environment.ShellEnvironment;
+import game.environment.ShellPlayerEnvironment;
 import game.evaluator.Evaluator;
 import game.evaluator.jmp.JmpEvaluator;
 import game.player.Player;
@@ -34,10 +34,10 @@ class GameTest {
 		foldPlayer = new FoldPlayer();
 		raisePlayer = new RaisePlayer();
 		
-		Environment env = new ShellEnvironment();
+		Environment env = new ShellPlayerEnvironment();
 		Evaluator ev = new JmpEvaluator();
 
-		game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), env, ev);
+		game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), ev);
 		
 	}
 	
@@ -48,10 +48,10 @@ class GameTest {
 	
 	@Test
 	void testGameConstructor() {
-		Environment env = new ShellEnvironment();
+		Environment env = new ShellPlayerEnvironment();
 		Evaluator ev = new JmpEvaluator();
 		assertDoesNotThrow(() -> {
-			Game game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), env, ev);
+			Game game = new Game(List.of(callPlayer, foldPlayer, raisePlayer), ev);
 		});
 		assertEquals(Game.DEFAULT_SMALL_BLIND, game.getSmallBlind());
 		assertEquals(3, game.getPlayers().size());

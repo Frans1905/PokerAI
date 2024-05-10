@@ -3,6 +3,7 @@ package game.player;
 import game.Game;
 import game.actions.Action;
 import game.cards.CardPair;
+import game.environment.Environment;
 
 public interface Player {
 	void setUpPlayerForNewRound();
@@ -38,4 +39,5 @@ public interface Player {
 	long getBetChipCount();
 	String getPlayerName();
 	Long getTotalBetChipCount();
+	Environment getEnvironment();
 }

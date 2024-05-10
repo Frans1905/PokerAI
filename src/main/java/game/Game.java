@@ -3,16 +3,12 @@ package game;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import game.actions.Action;
 import game.actions.ActionType;
 import game.actions.Actions;
 import game.cards.Card;
-import game.cards.CardPair;
 import game.dealer.Dealer;
-import game.environment.Environment;
-import game.evaluator.DefaultEvaluator;
 import game.evaluator.Evaluator;
 import game.player.Player;
 
@@ -34,22 +30,21 @@ public class Game {
 	
 	Dealer dealer;
 	Evaluator evaluator;
-	Environment env;
 		
 	boolean readyForRound;
 	
-	public Game(List<Player> players, Environment env, Evaluator ev) {
-		if (players.size() > 10 || players.size() < 2) {
-			throw new IllegalStateException("Expected number of players between"
-					+ "10 and 2");
-		}
-		this.env = env;
+	public Game(List<Player> players, Evaluator ev) {
 		this.evaluator = ev;
 		resetGame(players);
 	}
+	
+	public Game(Evaluator ev) {
+		this(new ArrayList<>(), ev);
+
+	}
 
 	public void resetGame(List<Player> players) {
-		this.players = new ArrayList<>(players);
+		this.players = players;
 		
 		smallBlind = DEFAULT_SMALL_BLIND;
 		potChipCount = 0;
@@ -66,7 +61,12 @@ public class Game {
 		readyForRound = false;
 	}
 	
+	
 	public void setupNewRound() {
+		if (players.size() > 8 || players.size() < 2) {
+			throw new IllegalStateException("Expected number of players between"
+					+ "8 and 2");
+		}
 		numSmallBlindPlayer++;
 		numCurrentPlayer = numSmallBlindPlayer;	
 		activePlayers.clear();
@@ -95,18 +95,34 @@ public class Game {
 		takeBlinds();
 		while(true) {
 			Action curAction = getNextAction();
-			env.updatePlayerAction(curAction, numCurrentPlayer);
+			updatePlayersAction(curAction, numCurrentPlayer);
 			if (handleAction(curAction)) {
 				break;
 			}
 		}
 		Map<Player, Integer> strengthResults = evaluator.evaluatePlayers(this);
 		Map<Player, Long> winnings = dealer.divideChipsFromPot(strengthResults, this.getPotChipCount());
-		env.updateResults(this, winnings);
+		updatePlayerResult(this, winnings);
 		
 		readyForRound = false;
 	}
 	
+	private void updatePlayerResult(Game game, Map<Player, Long> winnings) {
+		// TODO Auto-generated method stub
+		for (Player p : this.getPlayers()) {
+			p.getEnvironment().updateResults(this, winnings);
+		}
+
+	}
+
+	private void updatePlayersAction(Action curAction, int numCurrentPlayer2) {
+		// TODO Auto-generated method stub
+		for (Player p : this.players) {
+			p.getEnvironment().updatePlayerAction(curAction, numCurrentPlayer);
+		}
+
+	}
+
 	public boolean handleAction(Action curAction) {
 		if (curAction.getActionType() == ActionType.FOLD) {
 			activePlayers.remove(players.get(numCurrentPlayer));
@@ -118,7 +134,7 @@ public class Game {
 			}
 			addChipsToPot();
 			drawBoardCard();
-			env.updateBoard(cardsOnBoard);
+			updatePlayersBoard(cardsOnBoard);
 			callChipCount = 0;
 			numCurrentPlayer = numSmallBlindPlayer - 1;
 			resetPlayerActions();	
@@ -129,7 +145,16 @@ public class Game {
 		return false;
 	}
 	
+	
+	
 
+
+	private void updatePlayersBoard(List<Card> cardsOnBoard2) {
+		// TODO Auto-generated method stub
+		for (Player p : this.getPlayers()) {
+			p.getEnvironment().updateBoard(cardsOnBoard);
+		}
+	}
 
 	private void addChipsToPot() {
 		// TODO Auto-generated method stub
@@ -257,5 +282,12 @@ public class Game {
 	
 	public long getCallChipCount() {
 		return callChipCount;
+	}
+	
+	public void addPlayer(Player p) {
+		if (this.players.size() > 8) {
+			throw new IllegalStateException("Game cannot have more than 8 players");
+		}
+		this.players.add(p);
 	}
 }

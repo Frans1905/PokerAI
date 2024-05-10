@@ -136,4 +136,11 @@ public class DefaultPlayer implements Player{
 		return totalBetChipCount;
 	}
 
+
+	@Override
+	public Environment getEnvironment() {
+		// TODO Auto-generated method stub
+		return this.env;
+	}
+
 }
