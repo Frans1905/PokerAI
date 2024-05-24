@@ -18,6 +18,7 @@ public class Game {
 	private long smallBlind;
 	private long potChipCount;
 	private long callChipCount;
+	private long minimumRaiseValue;
 	
 	private List<Player> players;
 	private List<Player> activePlayers;
@@ -45,10 +46,12 @@ public class Game {
 
 	public void resetGame(List<Player> players) {
 		this.players = players;
+		informPlayersPositions();
 		
 		smallBlind = DEFAULT_SMALL_BLIND;
 		potChipCount = 0;
 		callChipCount = 0;
+		minimumRaiseValue = 0;
 		
 		numCurrentPlayer = 0;
 		numSmallBlindPlayer = -1;
@@ -62,6 +65,13 @@ public class Game {
 	}
 	
 	
+	private void informPlayersPositions() {
+		// TODO Auto-generated method stub
+		for (int i = 0; i < this.getPlayers().size(); i++) {
+			this.getPlayers().get(i).assignIndex(i);
+		}
+	}
+
 	public void setupNewRound() {
 		if (players.size() > 8 || players.size() < 2) {
 			throw new IllegalStateException("Expected number of players between"
@@ -74,6 +84,7 @@ public class Game {
 		activePlayers.addAll(players);
 		resetPlayers();
 		callChipCount = smallBlind * 2;
+		minimumRaiseValue = smallBlind * 2;
 		potChipCount = 0;
 		cardsOnBoard.clear();
 		dealer.reshuffleCards();
@@ -122,7 +133,7 @@ public class Game {
 	private void updatePlayersAction(Action curAction, int numCurrentPlayer2) {
 		// TODO Auto-generated method stub
 		for (Player p : this.players) {
-			p.getEnvironment().updatePlayerAction(curAction, numCurrentPlayer);
+			p.getEnvironment().updatePlayerAction(this, curAction, numCurrentPlayer);
 		}
 
 	}
@@ -140,11 +151,14 @@ public class Game {
 			drawBoardCard();
 			updatePlayersBoard(cardsOnBoard);
 			callChipCount = 0;
+			minimumRaiseValue = 0;
 			numCurrentPlayer = numSmallBlindPlayer - 1;
 			resetPlayerActions();	
 		}
 		else if (curAction.getActionType() == ActionType.RAISE) {
+			minimumRaiseValue = curAction.getMoveValue() - callChipCount;
 			callChipCount = curAction.getMoveValue();
+
 		}
 		return false;
 	}
@@ -297,7 +311,7 @@ public class Game {
 
 	public boolean isOver() {
 		// TODO Auto-generated method stub
-		return numOfBrokePlayers == 4;
+		return numOfBrokePlayers == this.players.size() - 1;
 	}
 	
 	public void endMatch() {
@@ -305,4 +319,14 @@ public class Game {
 			this.getPlayers().get(i).getEnvironment().updateEnd(this, i);
 		}
 	}
+
+	public long getMinimumRaiseValue() {
+		return minimumRaiseValue;
+	}
+
+	public void setMinimumRaiseValue(long minimumRaiseValue) {
+		this.minimumRaiseValue = minimumRaiseValue;
+	}
+	
+	
 }

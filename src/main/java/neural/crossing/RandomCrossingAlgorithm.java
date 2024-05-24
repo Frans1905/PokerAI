@@ -32,12 +32,12 @@ public class RandomCrossingAlgorithm implements CrossingAlgorithm {
 				
 				float bias;
 				if (rand < 0.5f) {
-					bias = l1biases.getFloat(i, 0);
+					bias = l1biases.getFloat(i);
 				}
 				else {
-					bias = l2biases.getFloat(i, 0);
+					bias = l2biases.getFloat(i);
 				}
-				childbiases.putScalar(i, 0, bias);
+				childbiases.putScalar(i, bias);
 				
 				for (int j = 0; j < l1weights.columns(); j++) {
 					float weight;

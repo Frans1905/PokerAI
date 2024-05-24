@@ -40,4 +40,5 @@ public interface Player {
 	String getPlayerName();
 	Long getTotalBetChipCount();
 	Environment getEnvironment();
+	void assignIndex(int index);
 }

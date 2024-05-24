@@ -26,6 +26,7 @@ public class FitnessTracker {
 		float fitness = fitnesses.getOrDefault(net, 0f);
 		float bonusFitness = fitnesses.getOrDefault(net, 0f);
 		fitness -= bonusFitness;
+		fitness *= numOfMatches;
 		fitness += chips;
 		fitness /= ++numOfMatches;
 		fitness += bonusFitness;

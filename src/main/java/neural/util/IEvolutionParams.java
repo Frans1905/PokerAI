@@ -4,7 +4,7 @@ import neural.activation.ActivationFunction;
 import neural.crossing.CrossingAlgorithm;
 import neural.mutation.MutationAlgorithm;
 
-public interface INeuralNetworkParams {
+public interface IEvolutionParams {
 
 	ActivationFunction getHiddenLayerActivation();
 	
@@ -13,4 +13,8 @@ public interface INeuralNetworkParams {
 	CrossingAlgorithm getCrossingAlgorithm();
 	
 	MutationAlgorithm getMutationAlgorithm();
+	
+	int getGenerationSize();
+	
+	int getNumOfGenerations();
 }

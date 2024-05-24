@@ -18,6 +18,7 @@ import game.player.Player;
 public class ShellPlayerEnvironment implements Environment {
 
 	private Scanner sc;
+	private int index;
 	
 	private static final Map<CardSuit, String> SYMBOL_MAP = Map.ofEntries(
 			entry(CardSuit.CLUBS, "♣"),
@@ -96,7 +97,7 @@ public class ShellPlayerEnvironment implements Environment {
 		while(true) {
 			String input = sc.nextLine();
 			if (input.equalsIgnoreCase("Check")) {
-				action = Actions.getCheckAction();
+				action = Actions.getCheckAction(callValue);
 				break;
 			}
 			else if(input.equalsIgnoreCase("Raise")) {
@@ -305,7 +306,7 @@ public class ShellPlayerEnvironment implements Environment {
 	}
 
 	@Override
-	public void updatePlayerAction(Action curAction, int numCurrentPlayer) {
+	public void updatePlayerAction(Game game, Action curAction, int numCurrentPlayer) {
 		// TODO Auto-generated method stub
 		waitRand();
 		System.out.println("Player " + (numCurrentPlayer + 1) +": " + curAction.toString());
@@ -339,8 +340,12 @@ public class ShellPlayerEnvironment implements Environment {
 		System.out.println("Drawn cards:");
 		drawCards(game.getCardsOnBoard());
 		
-		List<Player> players = game.getActivePlayers();
+		List<Player> players = game.getPlayers();
+		List<Player> active = game.getActivePlayers();
 		for (int i = 0; i < players.size(); i++) {
+			if (!active.contains(players.get(i))) {
+				continue;
+			}
 			CardPair pair = players.get(i).getCards();
 			System.out.printf("Player %d cards:\n", i + 1);
 			drawCardPair(pair);
@@ -371,5 +376,11 @@ public class ShellPlayerEnvironment implements Environment {
 	public void updateEnd(Game game, int numCurrentPlayer) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setIndex(int index) {
+		// TODO Auto-generated method stub
+		this.index = index;
 	}
 }

@@ -6,14 +6,14 @@ import java.util.List;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import neural.randomizer.Randomizer;
-import neural.util.INeuralNetworkParams;
+import neural.util.IEvolutionParams;
 
 public class PokerNeuralNetwork implements NeuralNetwork {
 
 	private List<Layer> layers;
-	private INeuralNetworkParams params;
+	private IEvolutionParams params;
 	
-	public PokerNeuralNetwork(INeuralNetworkParams params) {
+	public PokerNeuralNetwork(IEvolutionParams params) {
 		this.layers = null;
 		this.params = params;
 	}

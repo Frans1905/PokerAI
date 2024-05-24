@@ -5,24 +5,28 @@ import neural.crossing.CrossingAlgorithm;
 import neural.fitness.FitnessAlgorithm;
 import neural.mutation.MutationAlgorithm;
 
-public class NeuralNetworkParams implements INeuralNetworkParams {
+public class EvolutionParams implements IEvolutionParams {
 	
 	private ActivationFunction hiddenActivation;
 	private ActivationFunction outputActivation;
 	private MutationAlgorithm mutationAlg;
 	private CrossingAlgorithm crossingAlg;
 	private FitnessAlgorithm fitnessAlg;
+	private int generationSize;
+	private int numOfGenerations;
 	
 	
 	
-	public NeuralNetworkParams(ActivationFunction hiddenActivation, ActivationFunction outputActivation,
-			MutationAlgorithm mutationFunc, CrossingAlgorithm crossingAlg, FitnessAlgorithm fitnessAlg) {
+	public EvolutionParams(ActivationFunction hiddenActivation, ActivationFunction outputActivation,
+			MutationAlgorithm mutationFunc, CrossingAlgorithm crossingAlg, FitnessAlgorithm fitnessAlg,
+			int generationSize, int numOfGenerations) {
 		super();
 		this.hiddenActivation = hiddenActivation;
 		this.outputActivation = outputActivation;
 		this.mutationAlg = mutationFunc;
 		this.crossingAlg = crossingAlg;
 		this.fitnessAlg = fitnessAlg;
+		
 	}
 
 	@Override
@@ -92,5 +96,22 @@ public class NeuralNetworkParams implements INeuralNetworkParams {
 	public void setFitnessAlg(FitnessAlgorithm fitnessAlg) {
 		this.fitnessAlg = fitnessAlg;
 	}
+
+	public int getGenerationSize() {
+		return generationSize;
+	}
+
+	public void setGenerationSize(int generationSize) {
+		this.generationSize = generationSize;
+	}
+
+	public int getNumOfGenerations() {
+		return numOfGenerations;
+	}
+
+	public void setNumOfGenerations(int numOfGenerations) {
+		this.numOfGenerations = numOfGenerations;
+	}
+	
 	
 }

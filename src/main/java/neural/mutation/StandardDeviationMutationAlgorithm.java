@@ -44,9 +44,9 @@ public class StandardDeviationMutationAlgorithm  implements MutationAlgorithm{
 		Random r = new Random();
 		for (int i = 0; i < weights.rows(); i++) {
 			if (Math.random() <= mutationChance) {
-				float num = biases.getFloat(i, 0);
+				float num = biases.getFloat(i);
 				num += r.nextGaussian(0, stDev);
-				weights.putScalar(i, 0, num);
+				biases.putScalar(i, num);
 			}
 			for (int j = 0; j < weights.columns(); j++) {
 				if (Math.random() <= mutationChance) {

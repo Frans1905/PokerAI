@@ -6,7 +6,6 @@ public class Actions {
 
 	private static final Action FOLD_ACTION = new FoldAction();
 	private static final Action NONE_ACTION = new NoneAction(); 
-	private static final Action CHECK_ACTION = new CheckAction();
 	
 	public static Action getCallAction(long callValue) {
 		return new CallAction(callValue);
@@ -24,8 +23,8 @@ public class Actions {
 		return NONE_ACTION;
 	}
 	
-	public static Action getCheckAction() {
-		return CHECK_ACTION;
+	public static Action getCheckAction(long callvalue) {
+		return new CheckAction(callvalue);
 	}
 	
 	public static Action getAllInAction(long allInValue, long callValue) {
@@ -175,6 +174,11 @@ public class Actions {
 	
 	private static class CheckAction implements Action {
 		
+		private long val;
+		
+		public CheckAction(long val) {
+			this.val = val;
+		}
 		
 		@Override
 		public ActionType getActionType() {
@@ -184,7 +188,7 @@ public class Actions {
 		@Override
 		public long getMoveValue() {
 			// TODO Auto-generated method stub
-			return 0;
+			return val;
 		}
 
 		@Override

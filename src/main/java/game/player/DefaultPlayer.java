@@ -15,6 +15,7 @@ public class DefaultPlayer implements Player{
 	private Action lastAction;
 	private long betChipCount;
 	private long totalBetChipCount;
+	private int tableIndex;
 	
 	private CardPair cards;
 	
@@ -141,6 +142,14 @@ public class DefaultPlayer implements Player{
 	public Environment getEnvironment() {
 		// TODO Auto-generated method stub
 		return this.env;
+	}
+
+
+	@Override
+	public void assignIndex(int index) {
+		// TODO Auto-generated method stub
+		this.tableIndex = index;
+		this.getEnvironment().setIndex(index);
 	}
 
 }

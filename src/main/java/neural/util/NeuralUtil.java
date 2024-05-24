@@ -16,5 +16,5 @@ public class NeuralUtil {
 	public static final FitnessAlgorithm AVG_CHIPS = new ChipsAvgFitnessAlgorithm();
 	public static final MutationAlgorithm STD_DEV = new StandardDeviationMutationAlgorithm();
 	
-	public static final INeuralNetworkParams DEFAULT_PARAMS = new NeuralNetworkParams(SIGMOID, SIGMOID, STD_DEV, RANDOM, AVG_CHIPS);
+	public static final IEvolutionParams DEFAULT_PARAMS = new EvolutionParams(SIGMOID, SIGMOID, STD_DEV, RANDOM, AVG_CHIPS, 50, 100);
 }
