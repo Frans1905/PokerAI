@@ -110,4 +110,18 @@ public class ChipsAvgFitnessAlgorithm implements FitnessAlgorithm {
 		return this.fitnesses;
 	}
 
+	@Override
+	public void addNetworks(List<NeuralNetwork> nets) {
+		// TODO Auto-generated method stub
+		for (NeuralNetwork net : nets) {
+			addNetwork(net);
+		}
+	}
+
+	@Override
+	public void clearNetworks() {
+		// TODO Auto-generated method stub
+		this.neuralnets.clear();
+	}
+
 }

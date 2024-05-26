@@ -1,12 +1,19 @@
 package neural;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 public class DefaultLayer implements Layer {
 
 	private INDArray weights;
 	private INDArray biases;
 	private INDArray activations;
+	
+	public DefaultLayer(int size, int prevSize) {
+		weights = Nd4j.zeros(size, prevSize);
+		biases = Nd4j.zeros(size);
+		activations = Nd4j.zeros(size);
+	}
 	
 	@Override
 	public INDArray getWeights() {

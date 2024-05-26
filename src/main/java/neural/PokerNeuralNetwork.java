@@ -5,47 +5,49 @@ import java.util.List;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-import neural.randomizer.Randomizer;
-import neural.util.IEvolutionParams;
+import neural.crossing.CrossingAlgorithm;
+import neural.initialization.Initializator;
+import neural.mutation.MutationAlgorithm;
+import neural.util.INetworkParams;
 
 public class PokerNeuralNetwork implements NeuralNetwork {
 
 	private List<Layer> layers;
-	private IEvolutionParams params;
+	private INetworkParams params;
 	
-	public PokerNeuralNetwork(IEvolutionParams params) {
-		this.layers = null;
+	public PokerNeuralNetwork(INetworkParams params) {
+		this.layers = new ArrayList<>();
+		List<Integer> layerSizes = params.getLayers();
+		int prevSize = layerSizes.get(0);
+		for (int i = 1; i < layerSizes.size(); i++) {
+			int curSize = layerSizes.get(i);
+			this.layers.add(new DefaultLayer(curSize, prevSize));
+			prevSize = curSize;
+		}
 		this.params = params;
-	}
-	
-	public PokerNeuralNetwork(int size) {
-		this.layers = new ArrayList<Layer>(size);
-	}
-	
-	public PokerNeuralNetwork(List<Layer> layers) {
-		this.layers = layers;
 	}
 	
 	public PokerNeuralNetwork(PokerNeuralNetwork other) {
 		this.layers = other.getLayers();
+		this.params = other.getParams();
 	}
 	
 	@Override
-	public void fromParents(NeuralNetwork parent1, NeuralNetwork parent2) {
+	public void fromParents(NeuralNetwork parent1, NeuralNetwork parent2, CrossingAlgorithm alg) {
 		// TODO Auto-generated method stub
-		if (params.getCrossingAlgorithm() == null) {
+		if (alg == null) {
 			throw new IllegalArgumentException("Crossing algorithm null");
 		}
-		params.getCrossingAlgorithm().cross(this, parent1, parent2);
+		alg.cross(this, parent1, parent2);
 	}
 
 	@Override
-	public void mutate() {
+	public void mutate(MutationAlgorithm alg) {
 		// TODO Auto-generated method stub
-		if (params.getMutationAlgorithm() == null) {
+		if (alg == null) {
 			throw new IllegalArgumentException("Mutation algorithm null");
 		}
-		params.getMutationAlgorithm().mutate(this);
+		alg.mutate(this);
 	}
 
 	@Override
@@ -55,23 +57,9 @@ public class PokerNeuralNetwork implements NeuralNetwork {
 	}
 
 	@Override
-	public void randomize(Randomizer r) {
+	public void initialize(Initializator i) {
 		// TODO Auto-generated method stub
-		for(int i = 0; i < layers.size(); i++) {
-			INDArray ar = layers.get(i).getWeights();
-			randomizeNDArray(ar, r);
-			INDArray ar2 = layers.get(i).getBiases();
-			randomizeNDArray(ar2, r);
-		}
-	}
-
-	private void randomizeNDArray(INDArray ar, Randomizer r) {
-		// TODO Auto-generated method stub
-		for (int i = 0; i < ar.rows(); i++) {
-			for (int j = 0; j < ar.columns(); j++) {
-				ar.putScalar(i, j, r.getSmallRandom());
-			}
-		}
+		i.initialize(this);
 	}
 
 	public List<Layer> getLayers() {
@@ -87,6 +75,11 @@ public class PokerNeuralNetwork implements NeuralNetwork {
 		}
 		params.getOutputLayerActivation().activate(input);
 		return input;
+	}
+	
+	@Override
+	public INetworkParams getParams() {
+		return this.params;
 	}
 	
 	

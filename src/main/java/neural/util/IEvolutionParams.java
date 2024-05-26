@@ -1,18 +1,22 @@
 package neural.util;
 
-import neural.activation.ActivationFunction;
 import neural.crossing.CrossingAlgorithm;
+import neural.fitness.FitnessAlgorithm;
+import neural.initialization.Initializator;
 import neural.mutation.MutationAlgorithm;
+import neural.selection.SelectionAlgorithm;
 
 public interface IEvolutionParams {
-
-	ActivationFunction getHiddenLayerActivation();
 	
-	ActivationFunction getOutputLayerActivation();
+	SelectionAlgorithm getSelectionAlgorithm();
 	
 	CrossingAlgorithm getCrossingAlgorithm();
 	
 	MutationAlgorithm getMutationAlgorithm();
+	
+	FitnessAlgorithm getFitnessAlgorithm();
+	
+	Initializator getInitializator();
 	
 	int getGenerationSize();
 	

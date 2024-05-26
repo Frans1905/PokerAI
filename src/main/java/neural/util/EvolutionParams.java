@@ -1,45 +1,36 @@
 package neural.util;
 
-import neural.activation.ActivationFunction;
 import neural.crossing.CrossingAlgorithm;
 import neural.fitness.FitnessAlgorithm;
+import neural.initialization.Initializator;
 import neural.mutation.MutationAlgorithm;
+import neural.selection.SelectionAlgorithm;
 
 public class EvolutionParams implements IEvolutionParams {
 	
-	private ActivationFunction hiddenActivation;
-	private ActivationFunction outputActivation;
+	private SelectionAlgorithm selectionAlg;
 	private MutationAlgorithm mutationAlg;
 	private CrossingAlgorithm crossingAlg;
 	private FitnessAlgorithm fitnessAlg;
+	private Initializator initializator;
 	private int generationSize;
 	private int numOfGenerations;
 	
 	
 	
-	public EvolutionParams(ActivationFunction hiddenActivation, ActivationFunction outputActivation,
-			MutationAlgorithm mutationFunc, CrossingAlgorithm crossingAlg, FitnessAlgorithm fitnessAlg,
-			int generationSize, int numOfGenerations) {
+	public EvolutionParams(SelectionAlgorithm selectionAlg, MutationAlgorithm mutationFunc, CrossingAlgorithm crossingAlg, FitnessAlgorithm fitnessAlg,
+			Initializator initializator, int generationSize, int numOfGenerations) {
 		super();
-		this.hiddenActivation = hiddenActivation;
-		this.outputActivation = outputActivation;
+		this.selectionAlg = selectionAlg;
 		this.mutationAlg = mutationFunc;
 		this.crossingAlg = crossingAlg;
 		this.fitnessAlg = fitnessAlg;
-		
+		this.initializator = initializator;
+		this.generationSize = generationSize;
+		this.numOfGenerations = numOfGenerations;
 	}
 
-	@Override
-	public ActivationFunction getHiddenLayerActivation() {
-		// TODO Auto-generated method stub
-		return this.hiddenActivation;
-	}
 
-	@Override
-	public ActivationFunction getOutputLayerActivation() {
-		// TODO Auto-generated method stub
-		return this.outputActivation;
-	}
 
 	@Override
 	public CrossingAlgorithm getCrossingAlgorithm() {
@@ -51,14 +42,6 @@ public class EvolutionParams implements IEvolutionParams {
 	public MutationAlgorithm getMutationAlgorithm() {
 		// TODO Auto-generated method stub
 		return this.mutationAlg;
-	}
-
-	public void setHiddenActivation(ActivationFunction hiddenActivation) {
-		this.hiddenActivation = hiddenActivation;
-	}
-
-	public void setOutputActivation(ActivationFunction outputActivation) {
-		this.outputActivation = outputActivation;
 	}
 
 	public void setMutationAlgorithm(MutationAlgorithm mutationFunc) {
@@ -81,15 +64,8 @@ public class EvolutionParams implements IEvolutionParams {
 		this.crossingAlg = crossingAlg;
 	}
 
-	public ActivationFunction getHiddenActivation() {
-		return hiddenActivation;
-	}
-
-	public ActivationFunction getOutputActivation() {
-		return outputActivation;
-	}
-
-	public FitnessAlgorithm getFitnessAlg() {
+	@Override
+	public FitnessAlgorithm getFitnessAlgorithm() {
 		return fitnessAlg;
 	}
 
@@ -111,6 +87,22 @@ public class EvolutionParams implements IEvolutionParams {
 
 	public void setNumOfGenerations(int numOfGenerations) {
 		this.numOfGenerations = numOfGenerations;
+	}
+
+
+
+	@Override
+	public Initializator getInitializator() {
+		// TODO Auto-generated method stub
+		return this.initializator;
+	}
+
+
+
+	@Override
+	public SelectionAlgorithm getSelectionAlgorithm() {
+		// TODO Auto-generated method stub
+		return selectionAlg;
 	}
 	
 	
