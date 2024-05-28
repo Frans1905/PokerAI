@@ -1,5 +1,7 @@
 package neural.util;
 
+import java.util.List;
+
 import neural.activation.ActivationFunction;
 import neural.activation.SigmoidActivationFunction;
 import neural.crossing.CrossingAlgorithm;
@@ -24,6 +26,9 @@ public class NeuralUtil {
 	public static final int DEFAULT_GENERATION_SIZE = 50;
 	public static final int DEFAULT_NUM_OF_GENERATIONS = 100;
 	
-	public static final IEvolutionParams DEFAULT_PARAMS = new EvolutionParams(TOURNAMENT_SELECTION, STD_DEV, RANDOM, AVG_CHIPS, 
+	public static final IEvolutionParams DEFAULT_EVOLUTION_PARAMS = new EvolutionParams(TOURNAMENT_SELECTION, STD_DEV, RANDOM, AVG_CHIPS, 
 			XAVIER_INIT, DEFAULT_GENERATION_SIZE, DEFAULT_NUM_OF_GENERATIONS);
+	
+	public static final List<Integer> DEFAULT_LAYER_SIZES = List.of(48, 10, 10, 2);
+	public static final INetworkParams DEFAULT_POKER_NETWORK_PARAMS = new NetworkParams(DEFAULT_LAYER_SIZES, SIGMOID, SIGMOID);
 }

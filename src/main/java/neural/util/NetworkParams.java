@@ -1,10 +1,16 @@
 package neural.util;
 
+import java.io.Serializable;
 import java.util.List;
 
 import neural.activation.ActivationFunction;
 
-public class NetworkParams implements INetworkParams {
+public class NetworkParams implements INetworkParams, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static final List<Integer> DEFAULT_LAYERS = List.of();
 	
 	private List<Integer> layers;

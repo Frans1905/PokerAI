@@ -39,6 +39,7 @@ public class DefaultLogger implements Logger {
 		float mean = sum / values.size();
 		System.out.printf("Mean fitness: %f\n", mean);
 		System.out.printf("Median fitness: %f\n", median);
+		System.out.printf("Max fitness: %f\n", values.get(values.size() - 1));
 	}
 
 	@Override

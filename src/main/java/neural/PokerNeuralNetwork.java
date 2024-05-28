@@ -1,5 +1,6 @@
 package neural;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,13 @@ import neural.initialization.Initializator;
 import neural.mutation.MutationAlgorithm;
 import neural.util.INetworkParams;
 
-public class PokerNeuralNetwork implements NeuralNetwork {
+public class PokerNeuralNetwork implements NeuralNetwork, Serializable {
 
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<Layer> layers;
 	private INetworkParams params;
 	

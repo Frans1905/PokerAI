@@ -14,6 +14,7 @@ import game.player.Player;
 
 public class Game {
 	public static final long DEFAULT_SMALL_BLIND = 15;
+	public static final long STARTING_CHIP_COUNT = 3000;
 	
 	private long smallBlind;
 	private long potChipCount;
@@ -52,12 +53,14 @@ public class Game {
 		potChipCount = 0;
 		callChipCount = 0;
 		minimumRaiseValue = 0;
+		numOfBrokePlayers = 0;
 		
 		numCurrentPlayer = 0;
 		numSmallBlindPlayer = -1;
 		
 		activePlayers = new ArrayList<>(players.size());
 		cardsOnBoard = new ArrayList<>(5);
+		givePlayersChips();
 		
 		this.dealer = new Dealer();
 		
@@ -65,6 +68,13 @@ public class Game {
 	}
 	
 	
+	private void givePlayersChips() {
+		// TODO Auto-generated method stub
+		for (Player p : this.getPlayers()) {
+			p.setChipCount(Game.STARTING_CHIP_COUNT);
+		}
+	}
+
 	private void informPlayersPositions() {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < this.getPlayers().size(); i++) {
@@ -77,19 +87,27 @@ public class Game {
 			throw new IllegalStateException("Expected number of players between"
 					+ "8 and 2");
 		}
-		numSmallBlindPlayer++;
+		numSmallBlindPlayer = (numSmallBlindPlayer + 1) % this.players.size();
 		numOfBrokePlayers = 0;
 		numCurrentPlayer = numSmallBlindPlayer;	
 		activePlayers.clear();
-		activePlayers.addAll(players);
+		addActivePlayers(); 
 		resetPlayers();
 		callChipCount = smallBlind * 2;
-		minimumRaiseValue = smallBlind * 2;
+		minimumRaiseValue = smallBlind * 4;
 		potChipCount = 0;
 		cardsOnBoard.clear();
 		dealer.reshuffleCards();
 		
 		readyForRound = true;
+	}
+	
+	private void addActivePlayers() {
+		for (Player p : this.players) {
+			if (p.getChipCount() > 0) {
+				activePlayers.add(p);
+			}
+		}
 	}
 
 	private void resetPlayers() {
@@ -151,21 +169,17 @@ public class Game {
 			drawBoardCard();
 			updatePlayersBoard(cardsOnBoard);
 			callChipCount = 0;
-			minimumRaiseValue = 0;
+			minimumRaiseValue = 5;
 			numCurrentPlayer = numSmallBlindPlayer - 1;
 			resetPlayerActions();	
 		}
 		else if (curAction.getActionType() == ActionType.RAISE) {
-			minimumRaiseValue = curAction.getMoveValue() - callChipCount;
+			minimumRaiseValue = 2 * (curAction.getMoveValue() - callChipCount) + callChipCount;
 			callChipCount = curAction.getMoveValue();
 
 		}
 		return false;
 	}
-	
-	
-	
-
 
 	private void updatePlayersBoard(List<Card> cardsOnBoard2) {
 		// TODO Auto-generated method stub
@@ -201,26 +215,32 @@ public class Game {
 		long maxChipValue = maxChipValueOpt.getAsLong();
 		*/
 		for (Player p : activePlayers) {
-			Action lastAction = p.getLastAction();
-			int playerIndex = players.indexOf(p);
 			if(p.getLastAction().getActionType() == ActionType.ALLIN) {
 				continue;
 			}
-			if (lastAction.getActionType() == ActionType.NONE) {
-				return false;
-			}
-			else if (lastAction.getActionType() == ActionType.CHECK && 
-					callChipCount != 0  ||
-					p.getBetChipCount() < smallBlind * 2 ||
-					playerIndex == numSmallBlindPlayer + 1 &&
-					p.getBetChipCount() == smallBlind + 2) {
-				return false;
-			}
-			else if (p.getBetChipCount() != callChipCount) {
+			if (checkCondition(p)) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	private boolean checkCondition(Player p) {
+		Action lastAction = p.getLastAction();
+		int playerIndex = players.indexOf(p);
+		if (lastAction.getActionType() == ActionType.NONE) {
+			return true;
+		}
+		if (this.cardsOnBoard.size() == 0) {
+			if (playerIndex == numSmallBlindPlayer + 1 && p.getBetChipCount() == smallBlind * 2 &&
+					lastAction.getActionType() != ActionType.CHECK) {
+				return true;
+			}
+		}
+		if (p.getBetChipCount() != callChipCount) {
+			return true;
+		}
+		return false;
 	}
 	
 	private void resetPlayerActions() {
@@ -245,7 +265,8 @@ public class Game {
 	private int getNextPlayer() {
 		do {
 			numCurrentPlayer = ++numCurrentPlayer % players.size();
-		} while(!activePlayers.contains(players.get(numCurrentPlayer)));
+		} while(!activePlayers.contains(players.get(numCurrentPlayer)) &&
+				players.get(numSmallBlindPlayer).getLastAction().getActionType() != ActionType.ALLIN);
 		return numCurrentPlayer;
 	}
 
@@ -260,7 +281,8 @@ public class Game {
 		if (numCurrentPlayer != numSmallBlindPlayer) {
 			throw new IllegalStateException("Expected current player to be small blind, small blind index: " + numSmallBlindPlayer + ", currPlayerIndex: " + numCurrentPlayer);
 		}
-		players.get(numCurrentPlayer++).takeSmallBlind(smallBlind);
+		players.get(numCurrentPlayer).takeSmallBlind(smallBlind);
+		numCurrentPlayer = (numCurrentPlayer + 1) % this.players.size();
 		players.get(numCurrentPlayer).takeBigBlind(smallBlind);
 	}
 	

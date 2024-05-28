@@ -1,8 +1,15 @@
 package neural.activation;
 
+import java.io.Serializable;
+
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-public class SigmoidActivationFunction implements ActivationFunction {
+public class SigmoidActivationFunction implements ActivationFunction, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public void activate(INDArray input) {

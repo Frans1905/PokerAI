@@ -1,9 +1,11 @@
 package neural;
 
+import java.io.Serializable;
+
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-public class DefaultLayer implements Layer {
+public class DefaultLayer implements Layer, Serializable {
 
 	private INDArray weights;
 	private INDArray biases;
@@ -54,7 +56,7 @@ public class DefaultLayer implements Layer {
 	@Override
 	public INDArray propagate(INDArray ar) {
 		// TODO Auto-generated method stub
-		this.weights.mul(ar, this.activations);
+		this.weights.mmul(ar, this.activations);
 		this.activations.addi(this.biases);
 		return this.activations;
 	}

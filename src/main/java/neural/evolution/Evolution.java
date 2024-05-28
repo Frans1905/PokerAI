@@ -7,6 +7,7 @@ import java.util.Map;
 import neural.NeuralNetwork;
 import neural.PokerNeuralNetwork;
 import neural.evolution.logger.Logger;
+import neural.strategy.NetworkStrategy;
 import neural.util.IEvolutionParams;
 import neural.util.INetworkParams;
 
@@ -14,12 +15,15 @@ public class Evolution {
 
 	private IEvolutionParams evoparams;
 	private INetworkParams netparams;
+	private List<NetworkStrategy> strategies;
 	private List<Logger> loggers;
 	
 	
 	public Evolution(IEvolutionParams evoparams, INetworkParams netparams) {
 		this.evoparams = evoparams;
 		this.netparams = netparams;
+		this.loggers = new ArrayList<>();
+		this.strategies = new ArrayList<>();
 	}
 	
 	public void addLogger(Logger logger) {
@@ -27,15 +31,40 @@ public class Evolution {
 	}
 	
 	public void start() {
+		System.out.println("Evolution started...");
 		startLoggers();
-		List<NeuralNetwork> nets = createNetworks();
+		Map<NeuralNetwork, Float> fitnesses = null;
+		List<NeuralNetwork> nets = initializeNetworks();
 		for (int i = 0; i < evoparams.getNumOfGenerations(); i++) {
+			evoparams.getFitnessAlgorithm().clearNetworks();
 			evoparams.getFitnessAlgorithm().addNetworks(nets);
-			Map<NeuralNetwork, Float> fitnesses = evoparams.getFitnessAlgorithm().calculateFitness();
-			nets = createNewPopulation(fitnesses);
+			fitnesses = evoparams.getFitnessAlgorithm().calculateFitness();
 			log(fitnesses);
+			nets = createNewPopulation(fitnesses);
 		}
 		endLoggers();
+		NeuralNetwork best = getBestNetwork(fitnesses);
+		executeStrategies(best);
+	}
+
+	private void executeStrategies(NeuralNetwork best) {
+		// TODO Auto-generated method stub
+		for (NetworkStrategy s : strategies) {
+			s.accept(best);
+		}
+	}
+
+	private NeuralNetwork getBestNetwork(Map<NeuralNetwork, Float> fitnesses) {
+		// TODO Auto-generated method stub
+		float max = 0;
+		NeuralNetwork best = null;
+		for (NeuralNetwork net : fitnesses.keySet()) {
+			if (fitnesses.get(net) > max) {
+				max = fitnesses.get(net);
+				best = net;
+			}
+		}
+		return best;
 	}
 
 	private void endLoggers() {
@@ -71,7 +100,7 @@ public class Evolution {
 		return output;
 	}
 
-	private List<NeuralNetwork> createNetworks() {
+	private List<NeuralNetwork> initializeNetworks() {
 		// TODO Auto-generated method stub
 		List<NeuralNetwork> nets = new ArrayList<>();
 		for (int i = 0; i < this.evoparams.getGenerationSize(); i++) {
@@ -80,5 +109,9 @@ public class Evolution {
 			nets.add(net);
 		}
 		return nets;
+	}
+	
+	public void addStrategy(NetworkStrategy s) {
+		this.strategies.add(s);
 	}
 }

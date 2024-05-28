@@ -9,7 +9,6 @@ import game.environment.Environment;
 
 public class DefaultPlayer implements Player{
 
-	public static final long STARTING_CHIP_COUNT = 3000;
 	private String name;
 	private long chipCount;
 	private Action lastAction;
@@ -28,7 +27,7 @@ public class DefaultPlayer implements Player{
 	
 	public DefaultPlayer(String name, Environment env) {
 		this.name = name;
-		chipCount = STARTING_CHIP_COUNT;
+		chipCount = 0;
 		this.env = env;
 		setUpPlayerForNewRound();
 	}

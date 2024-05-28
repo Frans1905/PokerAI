@@ -72,7 +72,6 @@ public class ChipsAvgFitnessAlgorithm implements FitnessAlgorithm {
 		// TODO Auto-generated method stub
 		for (List<Player> list : tables) {
 			game.resetGame(list);
-			
 			for (int i = 0; i < roundLimit && !game.isOver(); i++) {
 				game.setupNewRound();
 				game.playRound();

@@ -16,6 +16,8 @@
     <maven.compiler.source>15</maven.compiler.source>
     <maven.compiler.target>15</maven.compiler.target>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+    <nd4j.backend>nd4j-native</nd4j.backend>
+    <dl4j-master.version>1.0.0-M2.1</dl4j-master.version>
   </properties>
 
   <dependencies>
@@ -43,6 +45,11 @@
       <version>1.0</version>
       <scope>system</scope>
       <systemPath>${JmpHandEvaluator-systemPath}</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.nd4j</groupId>
+      <artifactId>${nd4j.backend}</artifactId>
+      <version>${dl4j-master.version}</version>
     </dependency>
     <dependency>
       <groupId>org.nd4j</groupId>
