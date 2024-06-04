@@ -10,20 +10,28 @@ import neural.NeuralNetwork;
 public class StandardDeviationMutationAlgorithm  implements MutationAlgorithm{
 
 	private float mutationChance;
-	private float stDev;
-	private static final float DEFAULT_STDEV = 0.5f;
+	private float bigMutationChance;
+	private float stDevWeight;
+	private float stDevBias;
+	private static final float DEFAULT_STDEV_WEIGHT = 0.5f;
+	private static final float DEFAULT_STDEV_BIAS = 0.5f;
 	private static final float DEFAULT_MUTATION_CHANCE = 0.2f;
+	private static final float DEFAULT_BIG_MUTATION_CHANCE = 0.2f;
 	
 	
-	public StandardDeviationMutationAlgorithm(float mutationChance, float stDev) {
+	public StandardDeviationMutationAlgorithm(float mutationChance, float bigMutationChance, float stDevWeight, float stDevBias) {
 		super();
 		this.mutationChance = mutationChance;
-		this.stDev = stDev;
+		this.bigMutationChance = bigMutationChance;
+		this.stDevWeight = stDevWeight;
+		this.stDevBias = stDevBias;
 	}
 	
 	public StandardDeviationMutationAlgorithm() {
 		this.mutationChance = DEFAULT_MUTATION_CHANCE;
-		this.stDev = DEFAULT_STDEV;
+		this.stDevWeight = DEFAULT_STDEV_WEIGHT;
+		this.stDevBias = DEFAULT_STDEV_BIAS;
+		this.mutationChance = DEFAULT_BIG_MUTATION_CHANCE;
 	}
 
 
@@ -45,13 +53,13 @@ public class StandardDeviationMutationAlgorithm  implements MutationAlgorithm{
 		for (int i = 0; i < weights.rows(); i++) {
 			if (Math.random() <= mutationChance) {
 				float num = biases.getFloat(i);
-				num += r.nextGaussian(0, stDev);
+				num += r.nextGaussian(0, Math.random() < bigMutationChance ? 2 * stDevBias : stDevBias);
 				biases.putScalar(i, num);
 			}
 			for (int j = 0; j < weights.columns(); j++) {
 				if (Math.random() <= mutationChance) {
 					float num = weights.getFloat(i, j);
-					num += r.nextGaussian(0, stDev);
+					num += r.nextGaussian(0, Math.random() < bigMutationChance ? 2 * stDevWeight : stDevWeight);
 					weights.putScalar(i, j, num);
 				}
 			}

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import game.actions.ActionType;
 import game.cards.Card;
 import game.cards.CardPair;
 import game.cards.Deck;
@@ -49,6 +50,9 @@ public class Dealer {
 		Map<Player, Long> winnings = new HashMap<>();
 		List<Player> maxPlayers = new LinkedList<>();
 		for (Entry<Player, Integer> entry : strengthResults.entrySet()) {
+			if (entry.getKey().getLastAction().getActionType() == ActionType.NONE) {
+				continue;
+			}
 			for (int i = 0; i <= maxPlayers.size(); i++) {
 				if (i == maxPlayers.size()) {
 					maxPlayers.add(entry.getKey());
@@ -73,14 +77,15 @@ public class Dealer {
 			Player p = maxPlayers.get(index++);
 			profitPlayers.add(p);
 			long min = Long.MAX_VALUE;
-
+			long max = Long.MIN_VALUE;
 			while (index < maxPlayers.size() &&
 					strengthResults.get(p) == strengthResults.get(maxPlayers.get(index))) {
 				min = Long.min(min, values.get(index));
+				max = Long.max(max, values.get(index));
 				profitPlayers.add(maxPlayers.get(index++));
 			}
 
-			if (min == 0) {
+			if (max == 0) {
 				continue;
 			}
 
@@ -99,11 +104,13 @@ public class Dealer {
 					winnings.put(player, winnings.getOrDefault(player, 0l) + wonChips);
 				}
 
+				max = Long.MIN_VALUE;
 				for (int i = start; i < index; i++) {
 					min = Long.min(min, values.get(i));
+					max = Long.max(max, values.get(i));
 				}
 
-				if (min == 0) {
+				if (max == 0) {
 					break;
 				}
 			}

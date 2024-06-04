@@ -16,7 +16,7 @@ public interface Environment {
 	
 	void updateBoard(List<Card> drawnCards);
 
-	void updateResults(Game game, Map<Player, Long> winnings);
+	void updateResults(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings);
 	
 	void updateEnd(Game game, int numCurrentPlayer);
 	

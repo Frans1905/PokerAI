@@ -192,7 +192,7 @@ public class ShellPlayerEnvironment implements Environment {
 		List<Player> players = game.getPlayers();
 		// TODO Auto-generated method stub
 		int i;
-		for (i = game.getNumCurrentPlayer() + 1; i != currentPlayerIndex; i = (i + 1) % players.size()) {
+		for (i = (game.getNumCurrentPlayer() + 1) % players.size(); i != currentPlayerIndex; i = (i + 1) % players.size()) {
 			Player p = players.get(i);
 			if (p.getLastAction().getActionType() == ActionType.NONE &&
 					(p.getBetChipCount() == 0 || game.getCallChipCount() == 0)) {
@@ -334,7 +334,7 @@ public class ShellPlayerEnvironment implements Environment {
 	}
 
 	@Override
-	public void updateResults(Game game, Map<Player, Long> winnings) {
+	public void updateResults(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
 		
 		System.out.println("Drawn cards:");

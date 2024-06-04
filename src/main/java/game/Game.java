@@ -1,6 +1,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,12 +88,10 @@ public class Game {
 			throw new IllegalStateException("Expected number of players between"
 					+ "8 and 2");
 		}
-		numSmallBlindPlayer = (numSmallBlindPlayer + 1) % this.players.size();
-		numOfBrokePlayers = 0;
-		numCurrentPlayer = numSmallBlindPlayer;	
 		activePlayers.clear();
 		addActivePlayers(); 
 		resetPlayers();
+		numSmallBlindPlayer = getFirstPlayer();
 		callChipCount = smallBlind * 2;
 		minimumRaiseValue = smallBlind * 4;
 		potChipCount = 0;
@@ -124,26 +123,67 @@ public class Game {
 		drawPlayerCards();
 		takeBlinds();
 		while(true) {
-			Action curAction = getNextAction();
-			updatePlayersAction(curAction, numCurrentPlayer);
+			if (activePlayers.size() == 1) {
+				soloPlayerRoundEnd(activePlayers.get(0));
+				return;
+			}
+			Action curAction = Actions.getNoneAction();
+			if (!checkIfAllin()) {
+				curAction = getNextAction();
+				updatePlayersAction(curAction, numCurrentPlayer);
+			}
 			if (handleAction(curAction)) {
 				break;
 			}
 		}
 		Map<Player, Integer> strengthResults = evaluator.evaluatePlayers(this);
 		Map<Player, Long> winnings = dealer.divideChipsFromPot(strengthResults, this.getPotChipCount());
-		updatePlayerResult(this, winnings);
+		updatePlayerResult(this, strengthResults, winnings);
 		
 		readyForRound = false;
 	}
 	
-	private void updatePlayerResult(Game game, Map<Player, Long> winnings) {
+	private void soloPlayerRoundEnd(Player player) {
+		// TODO Auto-generated method stub
+		addChipsToPot();
+		Map<Player,Integer> strengthResults = new HashMap<>();
+		strengthResults.put(player, 1);
+		for (Player p : this.players) {
+			if (p != player) {
+				strengthResults.put(p, Integer.MAX_VALUE);
+			}
+		}
+		Map<Player, Long> winnings = new HashMap<>();
+		winnings.put(player, potChipCount);
+		player.giveChips(potChipCount);
+		updatePlayerResult(this, strengthResults, winnings);
+		readyForRound = false;
+	}
+
+	private boolean checkIfAllin() {
+		// TODO Auto-generated method stub
+		int count = 0;
+		Player nonAllinPlayer = null;;
+		for (Player p : activePlayers) {
+			if (p.getLastAction().getActionType() != ActionType.ALLIN) {
+				if (count == 1 || p.getBetChipCount() != this.callChipCount) {
+					return false;
+				}
+				nonAllinPlayer = p;
+				count++;
+			}
+		}
+		if (count == 1) nonAllinPlayer.setLastAction(Actions.getCheckAction(this.callChipCount));
+		return true;
+	}
+
+	private void updatePlayerResult(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
 		for (Player p : this.getPlayers()) {
 			if (p.getChipCount() == 0) {
 				numOfBrokePlayers++;
 			}
-			p.getEnvironment().updateResults(this, winnings);
+			p.getEnvironment().updateResults(this, strengthResults, winnings);
 		}
 
 	}
@@ -160,25 +200,38 @@ public class Game {
 		if (curAction.getActionType() == ActionType.FOLD) {
 			activePlayers.remove(players.get(numCurrentPlayer));
 		}
+		else if (curAction.getActionType() == ActionType.RAISE) {
+			minimumRaiseValue = 2 * (curAction.getMoveValue() - callChipCount) + callChipCount;
+			callChipCount = curAction.getMoveValue();
+		}
+		else if (curAction.getActionType() == ActionType.ALLIN && curAction.getMoveValue() > this.callChipCount) {
+			minimumRaiseValue = 2 * (curAction.getMoveValue() - callChipCount) + callChipCount;
+			callChipCount = curAction.getMoveValue();
+		}
 		if (curAction.getActionType() != ActionType.RAISE &&
 				checkPastActions()) {
+			addChipsToPot();
 			if (cardsOnBoard.size() == 5) {
 				return true;
 			}
-			addChipsToPot();
 			drawBoardCard();
 			updatePlayersBoard(cardsOnBoard);
 			callChipCount = 0;
 			minimumRaiseValue = 5;
 			numCurrentPlayer = numSmallBlindPlayer - 1;
-			resetPlayerActions();	
+			resetRoundActions();	
 		}
-		else if (curAction.getActionType() == ActionType.RAISE) {
-			minimumRaiseValue = 2 * (curAction.getMoveValue() - callChipCount) + callChipCount;
-			callChipCount = curAction.getMoveValue();
 
-		}
 		return false;
+	}
+
+	private void resetRoundActions() {
+		// TODO Auto-generated method stub
+		for (Player p : activePlayers) {
+			if (p.getLastAction().getActionType() != ActionType.ALLIN) {
+				p.setLastAction(Actions.getNoneAction());
+			}
+		}
 	}
 
 	private void updatePlayersBoard(List<Card> cardsOnBoard2) {
@@ -265,8 +318,8 @@ public class Game {
 	private int getNextPlayer() {
 		do {
 			numCurrentPlayer = ++numCurrentPlayer % players.size();
-		} while(!activePlayers.contains(players.get(numCurrentPlayer)) &&
-				players.get(numSmallBlindPlayer).getLastAction().getActionType() != ActionType.ALLIN);
+		} while(!activePlayers.contains(players.get(numCurrentPlayer)) ||
+				players.get(numCurrentPlayer).getLastAction().getActionType() == ActionType.ALLIN);
 		return numCurrentPlayer;
 	}
 
@@ -282,7 +335,7 @@ public class Game {
 			throw new IllegalStateException("Expected current player to be small blind, small blind index: " + numSmallBlindPlayer + ", currPlayerIndex: " + numCurrentPlayer);
 		}
 		players.get(numCurrentPlayer).takeSmallBlind(smallBlind);
-		numCurrentPlayer = (numCurrentPlayer + 1) % this.players.size();
+		numCurrentPlayer = getNextPlayer();
 		players.get(numCurrentPlayer).takeBigBlind(smallBlind);
 	}
 	

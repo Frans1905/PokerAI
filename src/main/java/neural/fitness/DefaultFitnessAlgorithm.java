@@ -15,7 +15,7 @@ import game.player.DefaultPlayer;
 import game.player.Player;
 import neural.NeuralNetwork;
 
-public class ChipsAvgFitnessAlgorithm implements FitnessAlgorithm {
+public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 
 	FitnessTracker tracker;
 	private List<NeuralNetwork> neuralnets;
@@ -24,13 +24,14 @@ public class ChipsAvgFitnessAlgorithm implements FitnessAlgorithm {
 	private int roundLimit;
 	private int numberOfMatches;
 	private int numOfPlayersPerTable;
-	private static final int DEFAULT_ROUND_LIMIT = 50;
+	private static final int DEFAULT_ROUND_LIMIT = 100;
 	private static final int DEFAULT_MATCH_NUMBER = 5;
 	private static final int DEFAULT_PLAYERS_PER_TABLE = 5;
+	private static final FitnessTracker DEFAULT_FITNESS_TRACKER = new MoveEvalFitnessTracker();
 
 	
-	public ChipsAvgFitnessAlgorithm(int roundLimit, int numberOfMatches, int playersPerTable) {
-		this.tracker = new FitnessTracker();
+	public DefaultFitnessAlgorithm(int roundLimit, int numberOfMatches, int playersPerTable, FitnessTracker tracker) {
+		this.tracker = tracker;
 		this.roundLimit = roundLimit;
 		this.numberOfMatches = numberOfMatches;
 		this.numOfPlayersPerTable = playersPerTable;
@@ -39,8 +40,8 @@ public class ChipsAvgFitnessAlgorithm implements FitnessAlgorithm {
 		this.game = new Game(new JmpEvaluator());
 	}
 	
-	public ChipsAvgFitnessAlgorithm() {
-		this(DEFAULT_ROUND_LIMIT, DEFAULT_MATCH_NUMBER, DEFAULT_PLAYERS_PER_TABLE);
+	public DefaultFitnessAlgorithm() {
+		this(DEFAULT_ROUND_LIMIT, DEFAULT_MATCH_NUMBER, DEFAULT_PLAYERS_PER_TABLE, DEFAULT_FITNESS_TRACKER);
 	}
 		
 	@Override
@@ -58,13 +59,13 @@ public class ChipsAvgFitnessAlgorithm implements FitnessAlgorithm {
 		if (neuralnets.size() % this.numOfPlayersPerTable != 0) {
 			throw new IllegalStateException("Collection of neural nets to be calculated must be a multiple of 5");
 		}
+		tracker.reset();
 		Map<NeuralNetwork, Float> fitnessMap = new HashMap<>();
 		for (int i = 0; i < numberOfMatches; i++) {
 			List<List<Player>> tables = arrangeTables();
 			playAllGames(tables);
 		}
 		this.fitnesses = tracker.getFitnesses();
-		tracker.reset();
 		return this.fitnesses;
 	}
 

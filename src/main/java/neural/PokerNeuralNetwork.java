@@ -3,6 +3,7 @@ package neural;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -39,12 +40,12 @@ public class PokerNeuralNetwork implements NeuralNetwork, Serializable {
 	}
 	
 	@Override
-	public void fromParents(NeuralNetwork parent1, NeuralNetwork parent2, CrossingAlgorithm alg) {
+	public void fromParents(NeuralNetwork parent1, NeuralNetwork parent2, CrossingAlgorithm alg, Map<NeuralNetwork, Float> fitnesses) {
 		// TODO Auto-generated method stub
 		if (alg == null) {
 			throw new IllegalArgumentException("Crossing algorithm null");
 		}
-		alg.cross(this, parent1, parent2);
+		alg.cross(this, parent1, parent2, fitnesses);
 	}
 
 	@Override
@@ -76,8 +77,12 @@ public class PokerNeuralNetwork implements NeuralNetwork, Serializable {
 	public INDArray process(INDArray input) {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < layers.size(); i++) {
+			//System.out.println(input);
 			input = layers.get(i).propagate(input);
+			//System.out.println(input);
+			//System.out.println(layers.get(i).getWeights());
 			params.getHiddenLayerActivation().activate(input);
+			//System.out.println(input);
 		}
 		params.getOutputLayerActivation().activate(input);
 		return input;

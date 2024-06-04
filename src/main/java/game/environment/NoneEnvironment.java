@@ -29,7 +29,7 @@ public class NoneEnvironment implements Environment {
 	}
 
 	@Override
-	public void updateResults(Game game, Map<Player, Long> winnings) {
+	public void updateResults(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,6 +1,8 @@
 package game.environment;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,10 @@ public class NeuralNetworkEnvironment implements Environment {
 	private List<Player> playedThisRound;
 	private int index;
 	
+	public NeuralNetworkEnvironment(NeuralNetwork net) {
+		this(net, null);
+	}
+	
 	public NeuralNetworkEnvironment(NeuralNetwork net, FitnessTracker tracker) {
 		this.net = net;
 		this.tracker = tracker;
@@ -46,10 +52,10 @@ public class NeuralNetworkEnvironment implements Environment {
 		Player thisp = game.getPlayers().get(this.index);
 		float moveVal = output.getFloat(0);
 		Action act;
-		if (moveVal < 0.33f) {
+		if (moveVal < 0.30f) {
 			act = Actions.getFoldAction();
 		}
-		else if (moveVal < 0.67f) {
+		else if (moveVal < 0.80f) {
 			if (game.getCallChipCount() == thisp.getBetChipCount()) {
 				act = Actions.getCheckAction(game.getCallChipCount());
 			}
@@ -62,15 +68,56 @@ public class NeuralNetworkEnvironment implements Environment {
 		}
 		else {
 			float raiseValueSig = output.getFloat(1);
-			if (raiseValueSig > ALLIN_CUTOFF || game.getCallChipCount() >= thisp.getChipCount()) {
+			if (raiseValueSig > ALLIN_CUTOFF || game.getMinimumRaiseValue() >= thisp.getChipCount()) {
 				act = Actions.getAllInAction(thisp.getChipCount(), game.getCallChipCount());
 			}
 			else {
+				act = parseRaiseAction(game, thisp, raiseValueSig);
+				/**
 				long value = (long) (game.getMinimumRaiseValue() + raiseValueSig * (thisp.getChipCount() - game.getMinimumRaiseValue()));
 				act = Actions.getRaiseAction(game.getCallChipCount(), value);
+				**/
 			}
 		}
 		return act;
+	}
+
+	private Action parseRaiseAction(Game game, Player thisp, float raiseValueSig) {
+		// TODO Auto-generated method stub
+		int raiseMult = 0;
+		/**
+		if (raiseValueSig < 0.2f) {
+			raiseMult = 2;
+		}
+		else if (raiseValueSig < 0.4f) {
+			raiseMult = 3;
+		}
+		else if (raiseValueSig < 0.6f) {
+			raiseMult = 4;
+		}
+		else if (raiseValueSig < 0.8f) {
+			raiseMult = 5;
+		}
+		else if (raiseValueSig < 0.9f) {
+			raiseMult = 6;
+		}
+		**/
+		if (raiseValueSig < 0.3f) {
+			raiseMult = 2;
+		}
+		else if (raiseValueSig < 0.6f) {
+			raiseMult = 3;
+		}
+		else if (raiseValueSig < 0.9f) {
+			raiseMult = 4;
+		}
+		long raiseval = Math.min(Math.max(game.getCallChipCount() * raiseMult, 5), thisp.getChipCount());
+		if (raiseval == thisp.getChipCount()) {
+			return Actions.getAllInAction(raiseval, game.getCallChipCount());
+		}
+		else {
+			return Actions.getRaiseAction(game.getCallChipCount(), raiseval);
+		}
 	}
 
 	private INDArray parseNeuralInput(Game game) {
@@ -96,7 +143,7 @@ public class NeuralNetworkEnvironment implements Environment {
 		float rank1 = playerCards.getFirstCard().getValue();
 		float suit1 = playerCards.getFirstCard().getSuit().ordinal() + 1;
 		float rank2 = playerCards.getSecondCard().getValue();
-		float suit2 = playerCards.getSecondCard().getRank().ordinal() + 1;
+		float suit2 = playerCards.getSecondCard().getSuit().ordinal() + 1;
 		index = parseCardValue(input, index, rank1, suit1);
 		index = parseCardValue(input, index, rank2, suit2);
 		input.putScalar(index++, this.index / (game.getPlayers().size() - 1));
@@ -155,6 +202,7 @@ public class NeuralNetworkEnvironment implements Environment {
 	public void updatePlayerAction(Game game, Action curAction, int numCurrentPlayer) {
 		// TODO Auto-generated method stub
 		this.playedThisRound.add(game.getPlayers().get(numCurrentPlayer));
+		this.tracker.informAction(net, curAction);
 	}
 
 	@Override
@@ -164,9 +212,20 @@ public class NeuralNetworkEnvironment implements Environment {
 	}
 
 	@Override
-	public void updateResults(Game game, Map<Player, Long> winnings) {
+	public void updateResults(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
 		this.playedThisRound.clear();
+		/**
+		Player thisp = game.getPlayers().get(index);
+		if (winnings.getOrDefault(thisp, -1l) == 0 && thisp.getLastAction().getActionType() == ActionType.RAISE ||
+				thisp.getLastAction().getActionType() == ActionType.ALLIN) {
+			tracker.subtractPoints(this.net, 500);
+		}
+		**/
+		Player p = game.getPlayers().get(index);
+		List<Integer> values = new ArrayList<>(strengthResults.values());
+		Collections.sort(values);
+		this.tracker.addRoundResults(net, winnings.getOrDefault(p, 0l), values.indexOf(strengthResults.get(p)));
 	}
 
 	@Override

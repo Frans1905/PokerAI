@@ -56,7 +56,7 @@ public class Evolution {
 
 	private NeuralNetwork getBestNetwork(Map<NeuralNetwork, Float> fitnesses) {
 		// TODO Auto-generated method stub
-		float max = 0;
+		float max = Float.MIN_NORMAL;
 		NeuralNetwork best = null;
 		for (NeuralNetwork net : fitnesses.keySet()) {
 			if (fitnesses.get(net) > max) {
@@ -93,7 +93,7 @@ public class Evolution {
 			NeuralNetwork parent1 = evoparams.getSelectionAlgorithm().select(fitnesses);
 			NeuralNetwork parent2 = evoparams.getSelectionAlgorithm().select(fitnesses);
 			NeuralNetwork child = new PokerNeuralNetwork(netparams);
-			child.fromParents(parent1, parent2, evoparams.getCrossingAlgorithm());
+			child.fromParents(parent1, parent2, evoparams.getCrossingAlgorithm(), fitnesses);
 			child.mutate(evoparams.getMutationAlgorithm());
 			output.add(child);
 		}

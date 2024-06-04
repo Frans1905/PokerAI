@@ -1,5 +1,7 @@
 package neural.crossing;
 
+import java.util.Map;
+
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import neural.Layer;
@@ -12,8 +14,15 @@ public class RandomCrossingAlgorithm implements CrossingAlgorithm {
 	}
 	
 	@Override
-	public void cross(NeuralNetwork child, NeuralNetwork parent1, NeuralNetwork parent2) {
+	public void cross(NeuralNetwork child, NeuralNetwork parent1, NeuralNetwork parent2, Map<NeuralNetwork, Float> fitnesses) {
 		// TODO Auto-generated method stub
+		float fitness1 = fitnesses.get(parent1);
+		float fitness2 = fitnesses.get(parent2);
+		if (fitness1 < 0 || fitness2 < 0) {
+			float min = Math.abs(Math.min(fitness1, fitness2));
+			fitness1 += 2 * min;
+			fitness2 += 2 * min;
+		}
 		
 		for (int k = 0; k < parent1.getLayers().size(); k++) {
 			Layer l1 = parent1.getLayers().get(k);
@@ -31,7 +40,8 @@ public class RandomCrossingAlgorithm implements CrossingAlgorithm {
 				double rand = Math.random();
 				
 				float bias;
-				if (rand < 0.5f) {
+				float fraction = fitness1 / (fitness2 + fitness2);
+				if (rand < fraction) {
 					bias = l1biases.getFloat(i);
 				}
 				else {
@@ -41,7 +51,7 @@ public class RandomCrossingAlgorithm implements CrossingAlgorithm {
 				
 				for (int j = 0; j < l1weights.columns(); j++) {
 					float weight;
-					if (rand < 0.5f) {
+					if (rand < fraction) {
 						weight = l1weights.getFloat(i, j);
 					}
 					else {

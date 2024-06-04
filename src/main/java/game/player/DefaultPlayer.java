@@ -43,7 +43,8 @@ public class DefaultPlayer implements Player{
 		// TODO Auto-generated method stub
 		Action act = env.getInput(game);
 		if (act.getActionType() == ActionType.CALL || 
-			act.getActionType() == ActionType.RAISE) {
+			act.getActionType() == ActionType.RAISE ||
+			act.getActionType() == ActionType.ALLIN) {
 			setBetChipCount(act.getMoveValue());
 		}
 		setLastAction(act);
@@ -105,6 +106,9 @@ public class DefaultPlayer implements Player{
 	public long takeSmallBlind(long smallBlind) {
 		// TODO Auto-generated method stub
 		betChipCount = chipCount < smallBlind ? chipCount : smallBlind;
+		if (betChipCount == chipCount) {
+			this.lastAction = Actions.getAllInAction(betChipCount, smallBlind);
+		}
 		return betChipCount;
 	}
 
@@ -112,6 +116,9 @@ public class DefaultPlayer implements Player{
 	public long takeBigBlind(long smallBlind) {
 		// TODO Auto-generated method stub
 		betChipCount = chipCount < smallBlind * 2 ? chipCount : smallBlind * 2;
+		if (betChipCount == chipCount) {
+			this.lastAction = Actions.getAllInAction(betChipCount, smallBlind * 2);
+		}
 		return betChipCount;
 	}
 

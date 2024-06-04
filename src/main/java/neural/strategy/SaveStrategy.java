@@ -34,7 +34,7 @@ public class SaveStrategy implements NetworkStrategy {
 		
 		System.out.print("Network name: ");
 		String name = sc.next();
-		try (FileOutputStream stream = new FileOutputStream(String.format("/resources/networks/%s.bin",name))) {
+		try (FileOutputStream stream = new FileOutputStream(String.format("./resources/networks/%s.bin",name))) {
 			ObjectOutputStream ostream = new ObjectOutputStream(stream);
 			ostream.writeObject(net);
 			ostream.flush();

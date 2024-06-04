@@ -1,6 +1,7 @@
 package neural;
 
 import java.util.List;
+import java.util.Map;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -11,7 +12,7 @@ import neural.util.INetworkParams;
 
 public interface NeuralNetwork {
 
-	void fromParents(NeuralNetwork parent1, NeuralNetwork parent2, CrossingAlgorithm alg);
+	void fromParents(NeuralNetwork parent1, NeuralNetwork parent2, CrossingAlgorithm alg, Map<NeuralNetwork, Float> fitnesses);
 	void mutate(MutationAlgorithm alg);
 	void copy(NeuralNetwork source);
 	void initialize(Initializator i);

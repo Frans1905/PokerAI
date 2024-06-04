@@ -1,7 +1,8 @@
-package game;
+package game.app;
 
 import java.util.List;
 
+import game.Game;
 import game.environment.ShellPlayerEnvironment;
 import game.evaluator.jmp.JmpEvaluator;
 import game.player.DefaultPlayer;
