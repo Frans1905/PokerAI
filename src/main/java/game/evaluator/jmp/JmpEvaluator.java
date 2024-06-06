@@ -32,6 +32,9 @@ public class JmpEvaluator implements Evaluator {
 		// TODO Auto-generated method stub
 		Map<Player, Integer> map = new HashMap<>();
 		for (Player p : game.getPlayers()) {
+			if (p.getChipCount() == 0 && p.getTotalBetChipCount() == 0) {
+				continue;
+			}
 			if (!game.getActivePlayers().contains(p)) {
 				map.put(p, Integer.MAX_VALUE);
 				continue;

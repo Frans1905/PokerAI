@@ -179,6 +179,7 @@ public class Game {
 
 	private void updatePlayerResult(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
+		numOfBrokePlayers = 0;
 		for (Player p : this.getPlayers()) {
 			if (p.getChipCount() == 0) {
 				numOfBrokePlayers++;
@@ -325,7 +326,7 @@ public class Game {
 
 	private void drawPlayerCards() {
 		// TODO Auto-generated method stub
-		for (Player p: players) {
+		for (Player p: activePlayers) {
 			p.setCards(dealer.dealPair());
 		}
 	}

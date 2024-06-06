@@ -90,18 +90,27 @@ public class Dealer {
 			}
 
 			while(true) {
+				
 				long sum = 0;
+				List<Player> removeList = new ArrayList<>();
 				for (int i = start; i < values.size(); i++) {
 					long chips = Long.min(values.get(i), min);
 					sum += chips;
 					potChipCount -= chips;
 					values.set(i, values.get(i) - chips);
+					if (values.get(i) == 0 && profitPlayers.contains(maxPlayers.get(i))) {
+						removeList.add(maxPlayers.get(i));
+					}
 				}
 
 				for (Player player : profitPlayers) {
 					long wonChips = (long) (sum / profitPlayers.size());
 					player.giveChips(wonChips);					
 					winnings.put(player, winnings.getOrDefault(player, 0l) + wonChips);
+				}
+				
+				for (Player removed : removeList) {
+					profitPlayers.remove(removed);
 				}
 
 				max = Long.MIN_VALUE;
