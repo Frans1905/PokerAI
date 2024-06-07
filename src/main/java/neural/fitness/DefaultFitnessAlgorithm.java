@@ -27,7 +27,7 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 	private static final int DEFAULT_ROUND_LIMIT = 100;
 	private static final int DEFAULT_MATCH_NUMBER = 5;
 	private static final int DEFAULT_PLAYERS_PER_TABLE = 5;
-	private static final FitnessTracker DEFAULT_FITNESS_TRACKER = new MoveEvalFitnessTracker();
+	private static final FitnessTracker DEFAULT_FITNESS_TRACKER = new ChipsAvgFitnessTracker();
 
 	
 	public DefaultFitnessAlgorithm(int roundLimit, int numberOfMatches, int playersPerTable, FitnessTracker tracker) {

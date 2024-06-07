@@ -1,8 +1,10 @@
 package neural.activation;
 
+import java.io.Serializable;
+
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-public class LinearBoundedActivationFunction implements ActivationFunction {
+public class LinearBoundedActivationFunction implements ActivationFunction, Serializable {
 
 	@Override
 	public void activate(INDArray input) {

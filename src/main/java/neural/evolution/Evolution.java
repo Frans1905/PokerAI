@@ -40,7 +40,9 @@ public class Evolution {
 			evoparams.getFitnessAlgorithm().addNetworks(nets);
 			fitnesses = evoparams.getFitnessAlgorithm().calculateFitness();
 			log(fitnesses);
-			nets = createNewPopulation(fitnesses);
+			if (i != evoparams.getNumOfGenerations() - 1) {
+				nets = createNewPopulation(fitnesses);
+			}
 		}
 		endLoggers();
 		NeuralNetwork best = getBestNetwork(fitnesses);
@@ -56,7 +58,7 @@ public class Evolution {
 
 	private NeuralNetwork getBestNetwork(Map<NeuralNetwork, Float> fitnesses) {
 		// TODO Auto-generated method stub
-		float max = Float.MIN_VALUE;
+		float max = Float.NEGATIVE_INFINITY;
 		NeuralNetwork best = null;
 		for (NeuralNetwork net : fitnesses.keySet()) {
 			if (Float.compare(fitnesses.get(net), max) > 0 ) {//fitnesses.get(net) > max) {

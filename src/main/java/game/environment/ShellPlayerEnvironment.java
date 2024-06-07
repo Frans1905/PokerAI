@@ -53,10 +53,10 @@ public class ShellPlayerEnvironment implements Environment {
 				action = handleAllInFoldCase(curPlayer.getChipCount(), curPlayer);
 			}
 			else if (callValue == curPlayer.getBetChipCount()) {
-				action = handleCheckRaiseFoldCase(callValue);
+				action = handleCheckRaiseFoldAllinCase(callValue, curPlayer);
 			}
 			else {
-				action = handleCallRaiseFoldCase(callValue);
+				action = handleCallRaiseFoldAllinCase(callValue, curPlayer);
 			}
 
 			if (!action.isValid(curPlayer)) {
@@ -91,9 +91,9 @@ public class ShellPlayerEnvironment implements Environment {
 		System.out.println();
 	}
 
-	private Action handleCheckRaiseFoldCase(long callValue) {
+	private Action handleCheckRaiseFoldAllinCase(long callValue, Player curPlayer) {
 		// TODO Auto-generated method stub
-		System.out.print("(Check/Raise/Fold): ");
+		System.out.print("(Check/Raise/Fold/Allin): ");
 		Action action = null;
 		while(true) {
 			String input = sc.nextLine();
@@ -109,8 +109,12 @@ public class ShellPlayerEnvironment implements Environment {
 				action = handleFold();
 				break;
 			}
+			else if (input.equalsIgnoreCase("Allin")) {
+				action = Actions.getAllInAction(curPlayer.getChipCount(), callValue);
+				break;
+			}
 			System.out.println("Invalid input: " + input);
-			System.out.print("What do you wanna do(Check/Raise/Fold): ");
+			System.out.print("What do you wanna do(Check/Raise/Fold/Allin): ");
 		}
 		return action;
 
@@ -138,9 +142,9 @@ public class ShellPlayerEnvironment implements Environment {
 
 	}
 
-	private Action handleCallRaiseFoldCase(long callValue) {
+	private Action handleCallRaiseFoldAllinCase(long callValue, Player curPlayer) {
 		// TODO Auto-generated method stub
-		System.out.print("(Call/Raise/Fold): ");
+		System.out.print("(Call/Raise/Fold/Allin): ");
 		Action action = null;
 		while (true) {
 			String input = sc.nextLine();
@@ -156,8 +160,12 @@ public class ShellPlayerEnvironment implements Environment {
 				action = handleFold();
 				break;
 			}
+			else if(input.equalsIgnoreCase("Allin")) {
+				action = Actions.getAllInAction(curPlayer.getChipCount(), callValue);
+				break;
+			}
 			System.out.println("Invalid input: " + input);
-			System.out.print("What do you wanna do(Call/Raise/Fold): ");
+			System.out.print("What do you wanna do(Call/Raise/Fold/Allin): ");
 		}
 		return action;
 	}

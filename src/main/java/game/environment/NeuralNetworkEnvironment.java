@@ -22,7 +22,7 @@ import neural.fitness.FitnessTracker;
 
 public class NeuralNetworkEnvironment implements Environment {
 
-	private final static float ALLIN_CUTOFF = 0.90f;
+	private final static float ALLIN_CUTOFF = 10f;
 	private NeuralNetwork net;
 	private FitnessTracker tracker;
 	private List<Player> playedThisRound;
@@ -101,13 +101,13 @@ public class NeuralNetworkEnvironment implements Environment {
 			raiseMult = 6;
 		}
 		**/
-		if (raiseValueSig < 0.3f) {
+		if (raiseValueSig < 3f) {
 			raiseMult = 2;
 		}
-		else if (raiseValueSig < 0.6f) {
+		else if (raiseValueSig < 6f) {
 			raiseMult = 3;
 		}
-		else if (raiseValueSig < 0.9f) {
+		else if (raiseValueSig <= 10f) {
 			raiseMult = 4;
 		}
 		long raiseval = Math.min(Math.max(game.getCallChipCount() * raiseMult, 5), thisp.getChipCount());

@@ -99,7 +99,7 @@ public class Actions {
 		@Override
 		public boolean isValid(Player curPlayer) {
 			// TODO Auto-generated method stub
-			if (this.getMoveValue() > curPlayer.getChipCount() ||
+			if (this.getMoveValue() >= curPlayer.getChipCount() ||
 					this.getRelativeMoveValue() < 2) {
 				return false;
 			}

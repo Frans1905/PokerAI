@@ -1,33 +1,22 @@
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import game.Game;
-import game.actions.Action;
 import game.actions.Actions;
 import game.cards.Card;
 import game.cards.CardPair;
-import game.cards.CardRank;
-import game.cards.CardSuit;
 import game.environment.Environment;
 import game.environment.NoneEnvironment;
-import game.environment.ShellPlayerEnvironment;
 import game.evaluator.Evaluator;
 import game.evaluator.jmp.JmpEvaluator;
-import game.player.DefaultPlayer;
 import game.player.Player;
-import game.player.stub.CallPlayer;
-import game.player.stub.FoldPlayer;
-import game.player.stub.RaisePlayer;
 import test.game.Deck;
 import test.game.TestGame;
 import test.game.TestPlayer;
