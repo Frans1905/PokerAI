@@ -37,6 +37,7 @@ public interface Player {
 	long takeBigBlind(long smallBlind);
 	long takeBetChips();
 	long getBetChipCount();
+	void setBetChipCount(long chips);
 	String getPlayerName();
 	Long getTotalBetChipCount();
 	Environment getEnvironment();

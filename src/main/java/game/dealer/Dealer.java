@@ -74,12 +74,12 @@ public class Dealer {
 		while (potChipCount > 0) {
 			int start = index;
 			List<Player> profitPlayers = new LinkedList<>();
-			Player p = maxPlayers.get(index++);
+			Player p = maxPlayers.get(index);
+			long min = values.get(index);
+			long max = values.get(index++);
 			profitPlayers.add(p);
-			long min = Long.MAX_VALUE;
-			long max = Long.MIN_VALUE;
 			while (index < maxPlayers.size() &&
-					strengthResults.get(p) == strengthResults.get(maxPlayers.get(index))) {
+					Integer.compare(strengthResults.get(p), strengthResults.get(maxPlayers.get(index)))== 0) {
 				min = Long.min(min, values.get(index));
 				max = Long.max(max, values.get(index));
 				profitPlayers.add(maxPlayers.get(index++));
@@ -112,9 +112,13 @@ public class Dealer {
 				for (Player removed : removeList) {
 					profitPlayers.remove(removed);
 				}
-
+				
+				if (profitPlayers.size() == 0) break;
+				
 				max = Long.MIN_VALUE;
+				min = Long.MAX_VALUE;
 				for (int i = start; i < index; i++) {
+					if (!profitPlayers.contains(maxPlayers.get(i))) continue;
 					min = Long.min(min, values.get(i));
 					max = Long.max(max, values.get(i));
 				}

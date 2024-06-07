@@ -177,7 +177,7 @@ public class Game {
 		return true;
 	}
 
-	private void updatePlayerResult(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings) {
+	public void updatePlayerResult(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
 		numOfBrokePlayers = 0;
 		for (Player p : this.getPlayers()) {
@@ -242,7 +242,7 @@ public class Game {
 		}
 	}
 
-	private void addChipsToPot() {
+	protected void addChipsToPot() {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < players.size(); i++) {
 			takePlayerChipsOnTable(i);
@@ -403,6 +403,15 @@ public class Game {
 	public void setMinimumRaiseValue(long minimumRaiseValue) {
 		this.minimumRaiseValue = minimumRaiseValue;
 	}
+
+	public Evaluator getEvaluator() {
+		return evaluator;
+	}
+
+	public Dealer getDealer() {
+		return dealer;
+	}
+	
 	
 	
 }

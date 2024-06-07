@@ -164,7 +164,7 @@ public class PokerAI {
 	private static void trainNetwork() {
 		// TODO Auto-generated method stub
 		MutationAlgorithm mut = new StandardDeviationMutationAlgorithm(0.2f, 0.3f, 0.3f, 0.3f);
-		INetworkParams netparams = new NetworkParams(List.of(48, 20, 20, 10, 2), NeuralUtil.RELU, NeuralUtil.SIGMOID);
+		INetworkParams netparams = new NetworkParams(List.of(48, 20, 20, 10, 2), NeuralUtil.LINEAR_BOUNDED , NeuralUtil.SIGMOID, NeuralUtil.RELU);
 		IEvolutionParams evoparams = new EvolutionParams(NeuralUtil.TOURNAMENT_SELECTION, 
 				mut, NeuralUtil.RANDOM, NeuralUtil.AVG_CHIPS, 
 				NeuralUtil.XAVIER_INIT, 50, 200);

@@ -89,6 +89,7 @@ public class DefaultPlayer implements Player{
 		return amount;
 	}
 	
+	@Override
 	public void setBetChipCount(long amount) {
 		betChipCount = amount;
 	}

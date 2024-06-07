@@ -14,12 +14,14 @@ public class NetworkParams implements INetworkParams, Serializable{
 	private static final List<Integer> DEFAULT_LAYERS = List.of();
 	
 	private List<Integer> layers;
-	private ActivationFunction outAct;
+	private ActivationFunction outRegAct;
+	private ActivationFunction outClassAct;
 	private ActivationFunction inAct;
 	
-	public NetworkParams(List<Integer> layers, ActivationFunction outAct, ActivationFunction inAct) {
+	public NetworkParams(List<Integer> layers, ActivationFunction outRegAct, ActivationFunction outClassAct, ActivationFunction inAct) {
 		this.layers = layers;
-		this.outAct = outAct;
+		this.outRegAct = outRegAct;
+		this.outClassAct = outClassAct;
 		this.inAct = inAct;
 	}
 
@@ -30,14 +32,20 @@ public class NetworkParams implements INetworkParams, Serializable{
 	}
 
 	@Override
-	public ActivationFunction getOutputLayerActivation() {
+	public ActivationFunction getOutputLayerRegressionActivation() {
 		// TODO Auto-generated method stub
-		return outAct;
+		return outRegAct;
 	}
 
 	@Override
 	public ActivationFunction getHiddenLayerActivation() {
 		// TODO Auto-generated method stub
 		return inAct;
+	}
+
+	@Override
+	public ActivationFunction getOutputLayerClassActivation() {
+		// TODO Auto-generated method stub
+		return outClassAct;
 	}
 }

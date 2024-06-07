@@ -2,7 +2,6 @@ package neural.fitness;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import game.actions.Action;
 import neural.NeuralNetwork;

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import neural.crossing.CrossingAlgorithm;
 import neural.initialization.Initializator;
@@ -84,8 +85,14 @@ public class PokerNeuralNetwork implements NeuralNetwork, Serializable {
 			params.getHiddenLayerActivation().activate(input);
 			//System.out.println(input);
 		}
-		params.getOutputLayerActivation().activate(input);
-		return input;
+		List<INDArray> output = new ArrayList<>();
+		INDArray inputClass = input.getScalar(0);
+		INDArray inputReg = input.getScalar(1);
+		params.getOutputLayerRegressionActivation().activate(inputReg);
+		params.getOutputLayerClassActivation().activate(inputClass);
+		output.add(inputClass);
+		output.add(inputReg);
+		return Nd4j.create(output, 2);
 	}
 	
 	@Override

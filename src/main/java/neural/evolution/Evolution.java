@@ -56,10 +56,10 @@ public class Evolution {
 
 	private NeuralNetwork getBestNetwork(Map<NeuralNetwork, Float> fitnesses) {
 		// TODO Auto-generated method stub
-		float max = Float.MIN_NORMAL;
+		float max = Float.MIN_VALUE;
 		NeuralNetwork best = null;
 		for (NeuralNetwork net : fitnesses.keySet()) {
-			if (fitnesses.get(net) > max) {
+			if (Float.compare(fitnesses.get(net), max) > 0 ) {//fitnesses.get(net) > max) {
 				max = fitnesses.get(net);
 				best = net;
 			}
