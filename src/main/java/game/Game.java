@@ -218,7 +218,7 @@ public class Game {
 			drawBoardCard();
 			updatePlayersBoard(cardsOnBoard);
 			callChipCount = 0;
-			minimumRaiseValue = 5;
+			minimumRaiseValue = 15;
 			numCurrentPlayer = numSmallBlindPlayer - 1;
 			resetRoundActions();	
 		}

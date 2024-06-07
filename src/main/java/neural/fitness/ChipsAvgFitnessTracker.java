@@ -3,6 +3,7 @@ package neural.fitness;
 import java.util.HashMap;
 import java.util.Map;
 
+import game.Game;
 import game.actions.Action;
 import neural.NeuralNetwork;
 
@@ -55,7 +56,7 @@ public class ChipsAvgFitnessTracker implements FitnessTracker {
 	}
 
 	@Override
-	public void addRoundResults(NeuralNetwork net, float chips, int position) {
+	public void addRoundResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -24,9 +24,9 @@ public class DefaultEvaluator implements Evaluator {
 		return null;
 	}
 
-	private void findStrongestCombination(CardPair cards, List<Card> cardsOnBoard) {
+	public int findStrongestCombination(CardPair cards, List<Card> cardsOnBoard) {
+		return 0;
 		// TODO Auto-generated method stub
-		
 	}
 
 }

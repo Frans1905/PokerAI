@@ -40,6 +40,10 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 		this.game = new Game(new JmpEvaluator());
 	}
 	
+	public DefaultFitnessAlgorithm(FitnessTracker tracker) {
+		this(DEFAULT_ROUND_LIMIT, DEFAULT_MATCH_NUMBER, DEFAULT_PLAYERS_PER_TABLE, tracker);
+	}
+	
 	public DefaultFitnessAlgorithm() {
 		this(DEFAULT_ROUND_LIMIT, DEFAULT_MATCH_NUMBER, DEFAULT_PLAYERS_PER_TABLE, DEFAULT_FITNESS_TRACKER);
 	}

@@ -44,7 +44,7 @@ public class JmpEvaluator implements Evaluator {
 		return map;
 	}
 
-	private int findStrongestCombination(CardPair cards, List<Card> cardsOnBoard) {
+	public int findStrongestCombination(CardPair cards, List<Card> cardsOnBoard) {
 		// TODO Auto-generated method stub
 		List<game.evaluator.jmp.Card> jmpCardsOnBoard = cardsOnBoard.stream().map((c) -> 
 			new game.evaluator.jmp.Card(c.getValue() - 2, SUIT_MAP.get(c.getSuit()))).toList();

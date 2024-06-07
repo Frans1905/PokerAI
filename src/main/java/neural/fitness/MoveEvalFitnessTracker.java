@@ -1,12 +1,16 @@
 package neural.fitness;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import game.Game;
 import game.actions.Action;
 import game.actions.ActionType;
+import game.evaluator.Evaluator;
+import game.player.Player;
 import neural.NeuralNetwork;
 
 public class MoveEvalFitnessTracker implements FitnessTracker {
@@ -28,6 +32,9 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 		// TODO Auto-generated method stub
 		if (chips == 0) {
 			subtractPoints(net, 500);
+		}
+		for (NeuralNetwork network : actions.keySet()) {
+			actions.get(network).clear();
 		}
 	}
 
@@ -59,11 +66,12 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 	}
 
 	@Override
-	public void addRoundResults(NeuralNetwork net, float chips, int position) {
+	public void addRoundResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
 		int raise = 0;
 		int allin = 0;
 		int fold = 0;
+		Player p = game.getPlayers().get(index);
 		for (Action a : this.actions.get(net)) {
 			if (a.getActionType() == ActionType.ALLIN) {
 				allin = 1;
@@ -75,9 +83,29 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 				fold = 1;
 			}
 		}
+		if (allin == 0 && raise == 0 && fold == 0) {
+			
+		}
+		Evaluator ev = game.getEvaluator();
+		List<Integer> strengths = new ArrayList<>();
+		int min = Integer.MAX_VALUE;
+		Player maxPlayer = null;
+		for (Player player : game.getPlayers()) {
+			if (!game.getActivePlayers().contains(player)) {
+				strengths.add(Integer.MAX_VALUE);
+				continue;
+			}
+			int strength = ev.findStrongestCombination(player.getCards(), game.getCardsOnBoard());
+			strengths.add(strength);
+			if (strength < min) {
+				min = strength;
+				maxPlayer = player;
+			}
+		}
+		
 		
 		if (allin == 1) {
-			if (position > 0) {
+			if (min == strengths.get(index)){
 				subtractPoints(net, 200);
 			}
 			else {
@@ -85,11 +113,19 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 			} 
 		}
 		if (raise == 1) {
-			if (position > 0) {
+			if (min == strengths.get(index)) {
 				subtractPoints(net, 40);
 			}
 			else {
 				addPoints(net, 20);
+			}
+		}
+		if (fold == 1) {
+			if (min < strengths.get(index)) {
+				addPoints(net, 60);
+			}
+			else {
+				subtractPoints(net, 30);
 			}
 		}
 	}

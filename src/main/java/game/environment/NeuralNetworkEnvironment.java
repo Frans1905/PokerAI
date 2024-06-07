@@ -110,7 +110,7 @@ public class NeuralNetworkEnvironment implements Environment {
 		else if (raiseValueSig <= 10f) {
 			raiseMult = 4;
 		}
-		long raiseval = Math.min(Math.max(game.getCallChipCount() * raiseMult, 5), thisp.getChipCount());
+		long raiseval = Math.min(Math.max(game.getCallChipCount(), 15) * raiseMult, thisp.getChipCount());
 		if (raiseval == thisp.getChipCount()) {
 			return Actions.getAllInAction(raiseval, game.getCallChipCount());
 		}
@@ -224,7 +224,7 @@ public class NeuralNetworkEnvironment implements Environment {
 		Player p = game.getPlayers().get(index);
 		List<Integer> values = new ArrayList<>(strengthResults.values());
 		Collections.sort(values);
-		this.tracker.addRoundResults(net, winnings.getOrDefault(p, 0l), values.indexOf(strengthResults.get(p)));
+		this.tracker.addRoundResults(net, game, index);
 	}
 
 	@Override
