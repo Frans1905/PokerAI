@@ -158,5 +158,10 @@ public class DefaultPlayer implements Player{
 		this.tableIndex = index;
 		this.getEnvironment().setIndex(index);
 	}
+	
+	@Override
+	public int getIndex() {
+		return this.tableIndex;
+	}
 
 }

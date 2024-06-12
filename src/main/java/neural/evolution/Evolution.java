@@ -1,6 +1,8 @@
 package neural.evolution;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +93,14 @@ public class Evolution {
 	private List<NeuralNetwork> createNewPopulation(Map<NeuralNetwork, Float> fitnesses) {
 		// TODO Auto-generated method stub
 		List<NeuralNetwork> output = new ArrayList<>();
-		for (int i = 0; i < evoparams.getGenerationSize(); i++) {
+		Map<NeuralNetwork, Float> copyFitnesses = new HashMap<>(fitnesses);
+		for (int i = 0; i < this.evoparams.getElitismCount(); i++) {
+			NeuralNetwork best = getBestNetwork(copyFitnesses);
+			output.add(best);
+			copyFitnesses.remove(best);
+		}
+		
+		for (int i = this.evoparams.getElitismCount(); i < evoparams.getGenerationSize(); i++) {
 			NeuralNetwork parent1 = evoparams.getSelectionAlgorithm().select(fitnesses);
 			NeuralNetwork parent2 = evoparams.getSelectionAlgorithm().select(fitnesses);
 			NeuralNetwork child = new PokerNeuralNetwork(netparams);

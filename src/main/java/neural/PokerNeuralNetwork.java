@@ -80,6 +80,7 @@ public class PokerNeuralNetwork implements NeuralNetwork, Serializable {
 		for (int i = 0; i < layers.size(); i++) {
 			//System.out.println(input);
 			input = layers.get(i).propagate(input);
+			if (i == layers.size() - 1) break;
 			//System.out.println(input);
 			//System.out.println(layers.get(i).getWeights());
 			params.getHiddenLayerActivation().activate(input);

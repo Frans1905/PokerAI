@@ -33,9 +33,6 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 		if (chips == 0) {
 			subtractPoints(net, 500);
 		}
-		for (NeuralNetwork network : actions.keySet()) {
-			actions.get(network).clear();
-		}
 	}
 
 	@Override
@@ -58,16 +55,25 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 	}
 
 	@Override
-	public void informAction(NeuralNetwork net, Action action) {
+	public void informAction(NeuralNetwork net, Action action, int playerIndex, Player player) {
 		// TODO Auto-generated method stub
 		points.putIfAbsent(net, 0f);
 		actions.putIfAbsent(net, new LinkedList<>());
-		actions.get(net).add(action);
+		if (player.getIndex() == playerIndex) {
+			actions.get(net).add(action);
+		}
 	}
 
 	@Override
 	public void addRoundResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
+		if (game.getCardsOnBoard().size() != 5) {
+			if (game.getActivePlayers().contains(game.getPlayers().get(index))) {
+				addPoints(net, 80);
+			}
+			this.actions.get(net).clear();
+			return;
+		}
 		int raise = 0;
 		int allin = 0;
 		int fold = 0;
@@ -90,6 +96,8 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 		List<Integer> strengths = new ArrayList<>();
 		int min = Integer.MAX_VALUE;
 		Player maxPlayer = null;
+		int playerStrength = 0;
+
 		for (Player player : game.getPlayers()) {
 			if (!game.getActivePlayers().contains(player)) {
 				strengths.add(Integer.MAX_VALUE);
@@ -97,6 +105,9 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 			}
 			int strength = ev.findStrongestCombination(player.getCards(), game.getCardsOnBoard());
 			strengths.add(strength);
+			if (player == p) {
+				playerStrength = strength;
+			}
 			if (strength < min) {
 				min = strength;
 				maxPlayer = player;
@@ -105,29 +116,52 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 		
 		
 		if (allin == 1) {
-			if (min == strengths.get(index)){
-				subtractPoints(net, 200);
+			if (min == playerStrength){
+				addPoints(net, 10f * (1 - playerStrength / 7462f) * p.getTotalBetChipCount());
 			}
 			else {
-				addPoints(net, 100);
+				subtractPoints(net, p.getTotalBetChipCount() * 10f * playerStrength / 7462f);
 			} 
 		}
+		else if (min != playerStrength) {
+			addPoints(net, 20f * playerStrength / 7462f);
+		}
+		else {
+			subtractPoints(net, 20f * (1 - (playerStrength / 7462f)));
+		}
 		if (raise == 1) {
-			if (min == strengths.get(index)) {
-				subtractPoints(net, 40);
+			if (!game.getActivePlayers().contains(p)) {
+				subtractPoints(net, p.getTotalBetChipCount() * 4f * playerStrength / 7462f);
+			}
+			else if (min == playerStrength) {
+				addPoints(net, p.getTotalBetChipCount() * 4f * (1 - playerStrength / 7462f));
 			}
 			else {
-				addPoints(net, 20);
+				subtractPoints(net, p.getTotalBetChipCount() * 4f * playerStrength / 7462f);
 			}
+		}
+		else if (min != playerStrength) {
+			addPoints(net, 20f * playerStrength / 7462f);
+		}
+		else {
+			subtractPoints(net, 20f * (1 - (playerStrength / 7462f)));
 		}
 		if (fold == 1) {
-			if (min < strengths.get(index)) {
-				addPoints(net, 60);
+			float betChips = game.getPotChipCount() / game.getActivePlayers().size();
+			if (min < playerStrength) {
+				addPoints(net, betChips * 6f * playerStrength / 7462f);
 			}
 			else {
-				subtractPoints(net, 30);
+				subtractPoints(net, betChips * 6f * (1 - (playerStrength / 7462f)));
 			}
 		}
+		else if (min != playerStrength) {
+			subtractPoints(net, 20f * playerStrength / 7462f);
+		}
+		else {
+			addPoints(net, 20f * (1 -(playerStrength / 7462f)));
+		}
+		this.actions.get(net).clear();
 	}
 
 }

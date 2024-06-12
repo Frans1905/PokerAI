@@ -4,6 +4,7 @@ import java.util.Map;
 
 import game.Game;
 import game.actions.Action;
+import game.player.Player;
 import neural.NeuralNetwork;
 
 public class NullTracker implements FitnessTracker {
@@ -27,7 +28,7 @@ public class NullTracker implements FitnessTracker {
 	}
 
 	@Override
-	public void informAction(NeuralNetwork net, Action action) {
+	public void informAction(NeuralNetwork net, Action action, int playerIndex, Player p) {
 		// TODO Auto-generated method stub
 		
 	}

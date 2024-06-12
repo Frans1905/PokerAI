@@ -15,11 +15,11 @@ public class EvolutionParams implements IEvolutionParams {
 	private Initializator initializator;
 	private int generationSize;
 	private int numOfGenerations;
-	
+	private int elitismCount;
 	
 	
 	public EvolutionParams(SelectionAlgorithm selectionAlg, MutationAlgorithm mutationFunc, CrossingAlgorithm crossingAlg, FitnessAlgorithm fitnessAlg,
-			Initializator initializator, int generationSize, int numOfGenerations) {
+			Initializator initializator, int generationSize, int numOfGenerations, int elitismCount) {
 		super();
 		this.selectionAlg = selectionAlg;
 		this.mutationAlg = mutationFunc;
@@ -28,6 +28,7 @@ public class EvolutionParams implements IEvolutionParams {
 		this.initializator = initializator;
 		this.generationSize = generationSize;
 		this.numOfGenerations = numOfGenerations;
+		this.elitismCount = elitismCount;
 	}
 
 
@@ -103,6 +104,14 @@ public class EvolutionParams implements IEvolutionParams {
 	public SelectionAlgorithm getSelectionAlgorithm() {
 		// TODO Auto-generated method stub
 		return selectionAlg;
+	}
+
+
+
+	@Override
+	public int getElitismCount() {
+		// TODO Auto-generated method stub
+		return this.elitismCount;
 	}
 	
 	

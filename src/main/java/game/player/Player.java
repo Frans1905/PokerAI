@@ -42,4 +42,5 @@ public interface Player {
 	Long getTotalBetChipCount();
 	Environment getEnvironment();
 	void assignIndex(int index);
+	int getIndex();
 }

@@ -52,7 +52,12 @@ public class NeuralNetworkEnvironment implements Environment {
 		float moveVal = output.getFloat(0);
 		Action act;
 		if (moveVal < 0.30f) {
-			act = Actions.getFoldAction();
+			if (game.getCallChipCount() == thisp.getBetChipCount()) {
+				act = Actions.getCheckAction(game.getCallChipCount());
+			}
+			else {
+				act = Actions.getFoldAction();
+			}
 		}
 		else if (moveVal < 0.80f) {
 			if (game.getCallChipCount() == thisp.getBetChipCount()) {
@@ -133,7 +138,7 @@ public class NeuralNetworkEnvironment implements Environment {
 			}
 			else {
 				rank = cardsOnBoard.get(i).getValue();
-				suit = cardsOnBoard.get(i).getRank().ordinal() + 1;
+				suit = cardsOnBoard.get(i).getSuit().ordinal() + 1;
 			}
 			index = parseCardValue(input, index, rank, suit);
 		}
@@ -185,7 +190,7 @@ public class NeuralNetworkEnvironment implements Environment {
 	private int parseCardValue(INDArray input, int index, float rank, float suit) {
 		// TODO Auto-generated method stub
 		CardSuit[] values = CardSuit.values();
-		input.putScalar(index++, rank / (float)(CardRank.ACE.ordinal() + 1));
+		input.putScalar(index++, rank / (float)(CardRank.ACE.ordinal() + 2));
 		for (int i = 0; i < 4; i++) {
 			if (values[i].ordinal() + 1 == suit) {
 				input.putScalar(index++, 1);
@@ -201,7 +206,7 @@ public class NeuralNetworkEnvironment implements Environment {
 	public void updatePlayerAction(Game game, Action curAction, int numCurrentPlayer) {
 		// TODO Auto-generated method stub
 		this.playedThisRound.add(game.getPlayers().get(numCurrentPlayer));
-		this.tracker.informAction(net, curAction);
+		this.tracker.informAction(net, curAction, numCurrentPlayer, game.getPlayers().get(this.index));
 	}
 
 	@Override

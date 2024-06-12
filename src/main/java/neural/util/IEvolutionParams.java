@@ -21,4 +21,6 @@ public interface IEvolutionParams {
 	int getGenerationSize();
 	
 	int getNumOfGenerations();
+	
+	int getElitismCount();
 }

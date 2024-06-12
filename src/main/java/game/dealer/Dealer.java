@@ -16,9 +16,11 @@ import game.player.Player;
 public class Dealer {
 
 	Deck cardDeck;
+	Map<Player, Long> winnings;
 
 	public Dealer() {
 		this.cardDeck = new Deck();
+		this.winnings = new HashMap<>();
 	}
 
 	public List<CardPair> dealPairs(int numOfPlayers) {
@@ -43,6 +45,10 @@ public class Dealer {
 
 	public Card drawCard() {
 		return cardDeck.drawCard();
+	}
+	
+	public Map<Player, Long> getLastWinnings() {
+		return this.winnings;
 	}
 
 	public Map<Player, Long> divideChipsFromPot(Map<Player, Integer> strengthResults, long potChipCount) {
@@ -128,6 +134,7 @@ public class Dealer {
 				}
 			}
 		}
+		this.winnings = winnings;
 		return winnings;
 
 	}
