@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import game.actions.ActionType;
 import neural.NeuralNetwork;
 
 public class DefaultLogger implements Logger {
@@ -17,7 +19,7 @@ public class DefaultLogger implements Logger {
 	}
 
 	@Override
-	public void log(Map<NeuralNetwork, Float> fitnesses) {
+	public void log(Map<NeuralNetwork, Float> fitnesses, Map<ActionType, Integer> actions) {
 		// TODO Auto-generated method stub
 		long elapsedTime = System.nanoTime() - startTime;
 		System.out.println("===================================================");
@@ -39,7 +41,16 @@ public class DefaultLogger implements Logger {
 		float mean = sum / values.size();
 		System.out.printf("Mean fitness: %f\n", mean);
 		System.out.printf("Median fitness: %f\n", median);
-		System.out.printf("Max fitness: %f\n", values.get(values.size() - 1));
+		System.out.printf("Max fitness: %f\n\n", values.get(values.size() - 1));
+		System.out.println("Action || Count || Part\n");
+		int actionsum = 0;
+		for (int value : actions.values()) {
+			actionsum += value;
+		}
+		for (Entry<ActionType, Integer> entry : actions.entrySet()) {
+			System.out.printf("%s || %5d || %4d%%\n", entry.getKey().toString(), entry.getValue(), entry.getValue() / actionsum);
+		}
+		System.out.println("");
 	}
 
 	@Override
@@ -47,6 +58,7 @@ public class DefaultLogger implements Logger {
 		// TODO Auto-generated method stub
 		this.startTime = System.nanoTime();
 	}
+
 	
 	
 }

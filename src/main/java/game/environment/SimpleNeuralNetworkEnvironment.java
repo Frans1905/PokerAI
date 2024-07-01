@@ -11,35 +11,35 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import game.Game;
 import game.actions.Action;
-import game.actions.ActionType;
 import game.actions.Actions;
 import game.cards.Card;
-import game.cards.CardPair;
-import game.cards.CardRank;
-import game.cards.CardSuit;
+import game.evaluator.BlindEvaluator;
+import game.evaluator.jmp.JmpEvaluator;
 import game.player.Player;
 import neural.NeuralNetwork;
 import neural.fitness.FitnessTracker;
 
-public class NeuralNetworkEnvironment implements NeuralEnvironment, Serializable {
+public class SimpleNeuralNetworkEnvironment implements NeuralEnvironment, Serializable {
 
 	private final static float ALLIN_CUTOFF = 10f;
 	private NeuralNetwork net;
 	private FitnessTracker tracker;
 	private List<Player> playedThisRound;
 	private int index;
+	private static final JmpEvaluator jmpEvaluator = new JmpEvaluator();
+
 	
-	public NeuralNetworkEnvironment(NeuralNetwork net) {
+	public SimpleNeuralNetworkEnvironment(NeuralNetwork net) {
 		this(net, null);
 	}
 	
-	public NeuralNetworkEnvironment(NeuralNetwork net, FitnessTracker tracker) {
+	public SimpleNeuralNetworkEnvironment(NeuralNetwork net, FitnessTracker tracker) {
 		this.net = net;
 		this.tracker = tracker;
 		this.playedThisRound = new ArrayList<>();
 	}
 	
-	public NeuralNetworkEnvironment() {
+	public SimpleNeuralNetworkEnvironment() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -90,7 +90,7 @@ public class NeuralNetworkEnvironment implements NeuralEnvironment, Serializable
 		}
 		return act;
 	}
-
+	
 	private Action parseRaiseAction(Game game, Player thisp, float raiseValueSig) {
 		// TODO Auto-generated method stub
 		int raiseMult = 0;
@@ -111,6 +111,7 @@ public class NeuralNetworkEnvironment implements NeuralEnvironment, Serializable
 			raiseMult = 6;
 		}
 		**/
+		/**
 		if (raiseValueSig < 3f) {
 			raiseMult = 2;
 		}
@@ -120,7 +121,10 @@ public class NeuralNetworkEnvironment implements NeuralEnvironment, Serializable
 		else if (raiseValueSig <= 10f) {
 			raiseMult = 4;
 		}
-		long raiseval = Math.min(Math.max(game.getCallChipCount(), 15) * raiseMult, thisp.getChipCount());
+		**/
+		//long raiseval = Math.min(Math.max(game.getCallChipCount(), 15) * raiseMult, thisp.getChipCount());
+		long raiseval = (long) Math.max(game.getMinimumRaiseValue(), raiseValueSig * (thisp.getChipCount() + thisp.getTotalBetChipCount()) - thisp.getTotalBetChipCount());
+		raiseval= Math.min(thisp.getChipCount(), raiseval);
 		if (raiseval == thisp.getChipCount()) {
 			return Actions.getAllInAction(raiseval, game.getCallChipCount());
 		}
@@ -131,106 +135,67 @@ public class NeuralNetworkEnvironment implements NeuralEnvironment, Serializable
 
 	private INDArray parseNeuralInput(Game game) {
 		// TODO Auto-generated method stub
-		INDArray input = Nd4j.create(48);
-		List<Card> cardsOnBoard = game.getCardsOnBoard();
+		INDArray input = Nd4j.create(3);
 		int index = 0;
-		for (int i = 0; i < 5; i++) {
-			float rank;
-			float suit;
-			if (i >= cardsOnBoard.size()) {
-				rank = 0;
-				suit = 0;
-			}
-			else {
-				rank = cardsOnBoard.get(i).getValue();
-				suit = cardsOnBoard.get(i).getSuit().ordinal() + 1;
-			}
-			index = parseCardValue(input, index, rank, suit);
-		}
-		
-		CardPair playerCards = game.getPlayers().get(this.index).getCards();
-		float rank1 = playerCards.getFirstCard().getValue();
-		float suit1 = playerCards.getFirstCard().getSuit().ordinal() + 1;
-		float rank2 = playerCards.getSecondCard().getValue();
-		float suit2 = playerCards.getSecondCard().getSuit().ordinal() + 1;
-		index = parseCardValue(input, index, rank1, suit1);
-		index = parseCardValue(input, index, rank2, suit2);
-		input.putScalar(index++, this.index / (game.getPlayers().size() - 1));
-		input.putScalar(index++, game.getNumSmallBlindPlayer() / (game.getPlayers().size() - 1));
-		input.putScalar(index++, game.getPotChipCount() / (game.getPlayers().size() * Game.STARTING_CHIP_COUNT));
 		Player thisp = game.getPlayers().get(this.index);
-		input.putScalar(index++, thisp.getChipCount() / Game.STARTING_CHIP_COUNT);
-		input.putScalar(index++, thisp.getTotalBetChipCount() / (float)thisp.getChipCount());
-		//put into input
-		for (int i = 0; i < game.getPlayers().size(); i++) {
-			int playerIndex = (game.getNumSmallBlindPlayer() + i) % game.getPlayers().size();
-			if (playerIndex == this.index) {
-				continue;
-			}
-			Player p = game.getPlayers().get(playerIndex);
-			if (p.getLastAction().getActionType() == ActionType.FOLD &&
-					!this.playedThisRound.contains(p)) {
-				input.putScalar(index++, 0);
-				input.putScalar(index++, 0);
-				continue;
-			}
-			else if(!game.getActivePlayers().contains(p) && p.getLastAction().getActionType() != ActionType.FOLD) {
-				input.putScalar(index++, -1);
-				input.putScalar(index++, 0);
-				continue;
-			}
-			if (game.getActivePlayers().contains(p) &&
-					!this.playedThisRound.contains(p)) {
-				input.putScalar(index++, (ActionType.NONE.ordinal() + 1) / 6);
-				input.putScalar(index++, 0);
-				continue;
-			}
-			
-			input.putScalar(index++, (p.getLastAction().getActionType().ordinal() + 1) / 6);
-			input.putScalar(index++, p.getLastAction().getMoveValue() / (float)p.getChipCount());
+		float strength = 0;
+		if (game.getCardsOnBoard().size() < 3) {
+			List<Card> cards = new ArrayList<>(game.getCardsOnBoard());
+			cards.add(thisp.getCards().getFirstCard());
+			cards.add(thisp.getCards().getSecondCard());
+			strength = BlindEvaluator.evaluateCards(cards);
 		}
-		return input;
-	}
+		else {
+			strength = jmpEvaluator.evaluatePlayer(game, thisp);
+		}
+		input.putScalar(index++, strength);
+		
+		float maxChips = (float)Game.STARTING_CHIP_COUNT * game.getPlayers().size();
 
-	private int parseCardValue(INDArray input, int index, float rank, float suit) {
-		// TODO Auto-generated method stub
-		CardSuit[] values = CardSuit.values();
-		input.putScalar(index++, rank / (float)(CardRank.ACE.ordinal() + 2));
-		for (int i = 0; i < 4; i++) {
-			if (values[i].ordinal() + 1 == suit) {
-				input.putScalar(index++, 1);
-			}
-			else {
-				input.putScalar(index++, 0);
-			}
+		input.putScalar(index++, (float)(thisp.getTotalBetChipCount() + thisp.getBetChipCount()) / (float)(thisp.getChipCount() + thisp.getTotalBetChipCount()));
+		input.putScalar(index++, Math.min(1, (float)(thisp.getTotalBetChipCount() + game.getCallChipCount()) / (float)(thisp.getChipCount() + thisp.getTotalBetChipCount())));
+		
+
+		/**
+		input.putScalar(index++, thisp.getChipCount() / maxChips);
+		input.putScalar(index++, (thisp.getBetChipCount() + thisp.getTotalBetChipCount()) / maxChips);
+		input.putScalar(index++, Math.max(0, game.getCallChipCount() - thisp.getBetChipCount() )/ maxChips);
+		input.putScalar(index++, game.getPotChipCount() / maxChips);
+		input.putScalar(index++, Math.min(1f, (game.getMinimumRaiseValue() / maxChips) ));
+		
+		if (thisp.getChipCount() == 0)
+		{
+			input.putScalar(index++, 1f);
+			input.putScalar(index++, 1f);
 		}
-		return index;
+		else
+		{
+			input.putScalar(index++, Math.min(1, (float) game.getMinimumRaiseValue() / thisp.getChipCount()));
+			input.putScalar(index++, Math.min(1, (float) game.getCallChipCount() / thisp.getChipCount()));
+		}
+		**/
+		return input;
+		
 	}
 
 	@Override
 	public void updatePlayerAction(Game game, Action curAction, int numCurrentPlayer) {
 		// TODO Auto-generated method stub
 		this.playedThisRound.add(game.getPlayers().get(numCurrentPlayer));
+		if (numCurrentPlayer != this.index) return;
 		this.tracker.informAction(net, curAction, numCurrentPlayer, game.getPlayers().get(this.index));
 	}
 
 	@Override
 	public void updateBoard(List<Card> drawnCards) {
 		// TODO Auto-generated method stub
-		this.playedThisRound.clear();;
+		this.playedThisRound.clear();
 	}
 
 	@Override
 	public void updateResults(Game game, Map<Player, Integer> strengthResults, Map<Player, Long> winnings) {
 		// TODO Auto-generated method stub
 		this.playedThisRound.clear();
-		/**
-		Player thisp = game.getPlayers().get(index);
-		if (winnings.getOrDefault(thisp, -1l) == 0 && thisp.getLastAction().getActionType() == ActionType.RAISE ||
-				thisp.getLastAction().getActionType() == ActionType.ALLIN) {
-			tracker.subtractPoints(this.net, 500);
-		}
-		**/
 		Player p = game.getPlayers().get(index);
 		List<Integer> values = new ArrayList<>(strengthResults.values());
 		Collections.sort(values);
@@ -252,7 +217,8 @@ public class NeuralNetworkEnvironment implements NeuralEnvironment, Serializable
 	@Override
 	public NeuralEnvironment duplicate(NeuralNetwork net, FitnessTracker fitness) {
 		// TODO Auto-generated method stub
-		return new NeuralNetworkEnvironment(net, fitness);
+		return new SimpleNeuralNetworkEnvironment(net, fitness);
 	}
 
+	
 }

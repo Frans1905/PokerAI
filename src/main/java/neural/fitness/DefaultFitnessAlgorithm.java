@@ -9,6 +9,7 @@ import java.util.Set;
 
 import game.Game;
 import game.environment.Environment;
+import game.environment.NeuralEnvironment;
 import game.environment.NeuralNetworkEnvironment;
 import game.evaluator.jmp.JmpEvaluator;
 import game.player.DefaultPlayer;
@@ -24,11 +25,12 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 	private int roundLimit;
 	private int numberOfMatches;
 	private int numOfPlayersPerTable;
+	private NeuralEnvironment netEnvironment;
 	private static final int DEFAULT_ROUND_LIMIT = 100;
 	private static final int DEFAULT_MATCH_NUMBER = 5;
 	private static final int DEFAULT_PLAYERS_PER_TABLE = 5;
 	private static final FitnessTracker DEFAULT_FITNESS_TRACKER = new ChipsAvgFitnessTracker();
-
+	private static final NeuralEnvironment DEFAULT_NEURAL_ENV = new NeuralNetworkEnvironment();
 	
 	public DefaultFitnessAlgorithm(int roundLimit, int numberOfMatches, int playersPerTable, FitnessTracker tracker) {
 		this.tracker = tracker;
@@ -37,7 +39,13 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 		this.numOfPlayersPerTable = playersPerTable;
 		this.fitnesses = new HashMap<NeuralNetwork, Float>();
 		this.neuralnets = new ArrayList<>();
+		netEnvironment = DEFAULT_NEURAL_ENV; 
 		this.game = new Game(new JmpEvaluator());
+	}
+	
+	@Override
+	public void setEnvironment(NeuralEnvironment env) {
+		this.netEnvironment = env;
 	}
 	
 	public DefaultFitnessAlgorithm(FitnessTracker tracker) {
@@ -99,7 +107,7 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 				}
 				NeuralNetwork net = neuralnets.get(index);
 				netsInPlay.add(net);
-				Environment env = new NeuralNetworkEnvironment(net, tracker);
+				Environment env = netEnvironment.duplicate(net, tracker);
 				Player p = new DefaultPlayer("neural", env);
 				table.add(p);
 			}
@@ -126,6 +134,12 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 	public void clearNetworks() {
 		// TODO Auto-generated method stub
 		this.neuralnets.clear();
+	}
+
+	@Override
+	public FitnessTracker getTracker() {
+		// TODO Auto-generated method stub
+		return this.tracker;
 	}
 
 }

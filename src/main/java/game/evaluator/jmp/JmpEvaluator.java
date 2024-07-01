@@ -53,7 +53,7 @@ public class JmpEvaluator implements Evaluator {
 				SUIT_MAP.get(cards.getFirstCard().getSuit()));
 		jmpCards[1] = new game.evaluator.jmp.Card(cards.getSecondCard().getValue() - 2, 
 				SUIT_MAP.get(cards.getSecondCard().getSuit()));
-		for (int i = 2; i < 7; i++) {
+		for (int i = 2; i < 2 + cardsOnBoard.size(); i++) {
 			Card c = cardsOnBoard.get(i - 2);
 			jmpCards[i] = new game.evaluator.jmp.Card(c.getValue() - 2, 
 					SUIT_MAP.get(c.getSuit()));
@@ -66,10 +66,12 @@ public class JmpEvaluator implements Evaluator {
 				int index = 0;
 				game.evaluator.jmp.Card[] cardArr = new game.evaluator.jmp.Card[5]; 
 				for (int k = 0; k < 7; k++) {
+					if (k >= 2 + cardsOnBoard.size()) continue;
 					if (k != i && k != j) {
 						cardArr[index++] = jmpCards[k];
 					}
 				}
+				if (index < 5) continue;
 				int value = Hand.evaluate(cardArr);
 				if (value < min) {
 					min = value;
@@ -79,5 +81,9 @@ public class JmpEvaluator implements Evaluator {
 		
 		return min;
 	}
-
+	
+	public float evaluatePlayer(Game game, Player player) {
+		int value = findStrongestCombination(player.getCards(), game.getCardsOnBoard());
+		return  1-(value/7462f);
+	}
 }

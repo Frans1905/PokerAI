@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import game.actions.ActionType;
 import neural.NeuralNetwork;
 import neural.PokerNeuralNetwork;
 import neural.evolution.logger.Logger;
@@ -37,11 +38,12 @@ public class Evolution {
 		startLoggers();
 		Map<NeuralNetwork, Float> fitnesses = null;
 		List<NeuralNetwork> nets = initializeNetworks();
+		evoparams.getFitnessAlgorithm().setEnvironment(netparams.getEnvironment());
 		for (int i = 0; i < evoparams.getNumOfGenerations(); i++) {
 			evoparams.getFitnessAlgorithm().clearNetworks();
 			evoparams.getFitnessAlgorithm().addNetworks(nets);
 			fitnesses = evoparams.getFitnessAlgorithm().calculateFitness();
-			log(fitnesses);
+			log(fitnesses, evoparams.getFitnessAlgorithm().getTracker().getActions());
 			if (i != evoparams.getNumOfGenerations() - 1) {
 				nets = createNewPopulation(fitnesses);
 			}
@@ -73,13 +75,13 @@ public class Evolution {
 
 	private void endLoggers() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	private void log(Map<NeuralNetwork, Float> fitnesses) {
+	private void log(Map<NeuralNetwork, Float> fitnesses, Map<ActionType, Integer> map) {
 		// TODO Auto-generated method stub
 		for (Logger log : loggers) {
-			log.log(fitnesses);
+			log.log(fitnesses, map);
 		}
 	}
 

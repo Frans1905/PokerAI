@@ -6,13 +6,13 @@ import java.util.Scanner;
 
 import game.Game;
 import game.environment.Environment;
-import game.environment.NeuralNetworkPlayingEnvironment;
 import game.environment.ShellPlayerEnvironment;
 import game.evaluator.Evaluator;
 import game.evaluator.jmp.JmpEvaluator;
 import game.player.DefaultPlayer;
 import game.player.Player;
 import neural.NeuralNetwork;
+import neural.fitness.NullTracker;
 
 public class PlayingStrategy implements NetworkStrategy {
 
@@ -45,7 +45,7 @@ public class PlayingStrategy implements NetworkStrategy {
 		}
 		List<Player> players = new ArrayList<>();
 		for (int i = 0; i < tableSize - 1; i++) {
-			Environment env = new NeuralNetworkPlayingEnvironment(net); 
+			Environment env = net.getParams().getEnvironment().duplicate(net, new NullTracker()); 
 			Player p = new DefaultPlayer("neural", env);
 			players.add(p);
 		}

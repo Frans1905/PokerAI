@@ -55,7 +55,7 @@ public class StrengthChipRatioFitnessTracker implements FitnessTracker {
 	@Override
 	public void informAction(NeuralNetwork net, Action action, int playerIndex, Player p) {
 		// TODO Auto-generated method stub
-		
+		FitnessTracker.super.informAction(net, action, playerIndex, p);
 	}
 
 	@Override
@@ -73,6 +73,7 @@ public class StrengthChipRatioFitnessTracker implements FitnessTracker {
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
+		FitnessTracker.super.reset();
 		fitnesses.clear();
 	}
 

@@ -121,7 +121,7 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 			}
 			else {
 				subtractPoints(net, p.getTotalBetChipCount() * 10f * playerStrength / 7462f);
-			} 
+			} 	
 		}
 		else if (min != playerStrength) {
 			addPoints(net, 20f * playerStrength / 7462f);

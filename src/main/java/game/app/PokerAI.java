@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 import game.Game;
 import game.environment.Environment;
-import game.environment.NeuralNetworkPlayingEnvironment;
 import game.environment.ShellPlayerEnvironment;
+import game.environment.SimpleNeuralNetworkEnvironment;
 import game.evaluator.jmp.JmpEvaluator;
 import game.player.DefaultPlayer;
 import game.player.Player;
@@ -21,6 +21,10 @@ import neural.PokerNeuralNetwork;
 import neural.evolution.Evolution;
 import neural.evolution.logger.DefaultLogger;
 import neural.evolution.logger.Logger;
+import neural.fitness.DefaultFitnessAlgorithm;
+import neural.fitness.FitnessAlgorithm;
+import neural.fitness.NullTracker;
+import neural.fitness.StrengthChipRatioFitnessTracker;
 import neural.mutation.MutationAlgorithm;
 import neural.mutation.StandardDeviationMutationAlgorithm;
 import neural.strategy.NetworkStrategy;
@@ -46,7 +50,7 @@ public class PokerAI {
 				             + "|||  __/| (_) ||   <|  __/| |  / ___ \\  | | ||\r\n"
 				             + "|||_|    \\___/ |_|\\_\\\\___||_| /_/   \\_\\|___|||\r\n"
 				             + "\\============================================/\n"
-				             + "By Fran Širić\n\n");
+				             + "By Fran Siric\n\n");
 		
 		System.out.println("1 - Play demo");
 		System.out.println("2 - Train network");
@@ -122,7 +126,7 @@ public class PokerAI {
 			}
 			File netFile = netFiles[netNum - 1];
 			PokerNeuralNetwork net = (PokerNeuralNetwork) loadNetwork(netFile);
-			Environment env = new NeuralNetworkPlayingEnvironment(net);
+			Environment env = net.getParams().getEnvironment().duplicate(net, new NullTracker());
 			Player p = new DefaultPlayer("neural", env);
 			players.add(p);
 		}
@@ -163,10 +167,11 @@ public class PokerAI {
 
 	private static void trainNetwork() {
 		// TODO Auto-generated method stub
-		MutationAlgorithm mut = new StandardDeviationMutationAlgorithm(0.1f, 0.3f, 0.1f, 0.1f);
-		INetworkParams netparams = new NetworkParams(List.of(48, 60, 40, 20, 2), NeuralUtil.LINEAR_BOUNDED , NeuralUtil.SIGMOID, NeuralUtil.RELU);
+		FitnessAlgorithm fitnessAlg = new DefaultFitnessAlgorithm(100, 75, 5, new StrengthChipRatioFitnessTracker());
+		MutationAlgorithm mut = new StandardDeviationMutationAlgorithm(0.2f, 0.3f, 0.3f, 0.3f);
+		INetworkParams netparams = new NetworkParams(new SimpleNeuralNetworkEnvironment(), List.of(3, 20, 15, 10, 2), NeuralUtil.LINEAR_BOUNDED , NeuralUtil.SIGMOID, NeuralUtil.RELU);
 		IEvolutionParams evoparams = new EvolutionParams(NeuralUtil.TOURNAMENT_SELECTION, 
-				mut, NeuralUtil.MEAN, NeuralUtil.STRENGTH_CHIP_RATIO, 
+				mut, NeuralUtil.MEAN, fitnessAlg, 
 				NeuralUtil.XAVIER_INIT, 50, 200, 5);
 		Evolution evo = new Evolution(evoparams, netparams);
 		
