@@ -21,4 +21,8 @@ public class SigmoidActivationFunction implements ActivationFunction, Serializab
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return "Sigmoid";
+	}
 }

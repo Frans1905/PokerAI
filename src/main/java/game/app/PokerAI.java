@@ -11,6 +11,8 @@ import java.util.Scanner;
 
 import game.Game;
 import game.environment.Environment;
+import game.environment.NeuralEnvironment;
+import game.environment.NeuralNetworkEnvironment;
 import game.environment.ShellPlayerEnvironment;
 import game.environment.SimpleNeuralNetworkEnvironment;
 import game.evaluator.jmp.JmpEvaluator;
@@ -20,6 +22,7 @@ import game.player.stub.CallPlayer;
 import game.player.stub.FoldPlayer;
 import game.player.stub.RaisePlayer;
 import neural.PokerNeuralNetwork;
+import neural.activation.ActivationFunction;
 import neural.evolution.Evolution;
 import neural.evolution.logger.DefaultLogger;
 import neural.evolution.logger.Logger;
@@ -171,12 +174,31 @@ public class PokerAI {
 
 	private static void trainNetwork() {
 		// TODO Auto-generated method stub
-		FitnessAlgorithm fitnessAlg = new DefaultFitnessAlgorithm(100, 75, 5, new RankFitnessTracker());
-		MutationAlgorithm mut = new StandardDeviationMutationAlgorithm(0.2f, 0.3f, 0.3f, 0.3f);
-		INetworkParams netparams = new NetworkParams(new SimpleNeuralNetworkEnvironment(), List.of(3, 20, 15, 10, 2), NeuralUtil.LINEAR_BOUNDED , NeuralUtil.SIGMOID, NeuralUtil.RELU);
-		IEvolutionParams evoparams = new EvolutionParams(NeuralUtil.TOURNAMENT_SELECTION, 
+		System.out.println("Evolution settings");
+		System.out.println("1 - Default parameters");
+		System.out.println("2 - Custom parameters");
+		String input = "";
+		while (true) {
+			System.out.print("Choose option: ");
+			input = sc.next();
+			if (input.equals("1") || input.equals("2")) {
+				break;
+			}
+		}
+		INetworkParams netparams;
+		IEvolutionParams evoparams;
+		if (input.equals("1")) {
+			FitnessAlgorithm fitnessAlg = new DefaultFitnessAlgorithm(100, 75, 5, new RankFitnessTracker());
+			MutationAlgorithm mut = new StandardDeviationMutationAlgorithm(0.2f, 0.3f, 0.3f, 0.3f);
+			netparams = new NetworkParams(new SimpleNeuralNetworkEnvironment(), List.of(3, 20, 15, 10, 2), NeuralUtil.LINEAR_BOUNDED , NeuralUtil.SIGMOID, NeuralUtil.RELU);
+			evoparams = new EvolutionParams(NeuralUtil.TOURNAMENT_SELECTION, 
 				mut, NeuralUtil.MEAN, fitnessAlg, 
 				NeuralUtil.XAVIER_INIT, 50, 200, 5);
+		}
+		else {
+			netparams = getUserNetParams();
+			evoparams = getUserEvoParams();
+		}
 		Evolution evo = new Evolution(evoparams, netparams);
 		
 		Logger deflog = new DefaultLogger();
@@ -188,6 +210,257 @@ public class PokerAI {
 		evo.addStrategy(play);
 		
 		evo.start();
+	}
+
+	private static IEvolutionParams getUserEvoParams() {
+		// TODO Auto-generated method stub
+		int generationSize = 0;
+		String input = "";
+		while (true) {
+			System.out.print("Choose generation size(5-200): ");
+			input = sc.next();
+			try {
+				generationSize = Integer.parseInt(input);
+			}
+			catch (Exception e) {
+				
+			}
+			if (generationSize >= 5 && generationSize <= 200) {
+				break;
+			}
+		}
+		
+		int numOfIterations = 0;
+		while (true) {
+			System.out.print("Choose iteration count(1-100000): ");
+			input = sc.next();
+			try {
+				numOfIterations = Integer.parseInt(input);
+			}
+			catch (Exception e) {
+				
+			}
+			if (numOfIterations >= 1 && numOfIterations <= 100000) {
+				break;
+			}
+		}
+		
+		int elitism = 0;
+		while (true) {
+			System.out.print("Choose elitism count(0-generation size): ");
+			input = sc.next();
+			try {
+				elitism = Integer.parseInt(input);
+			}
+			catch (Exception e) {
+				
+			}
+			if (elitism >= 0 && elitism <= generationSize) {
+				break;
+			}
+		}
+		
+		int roundLimit = 0;
+		while (true) {
+			System.out.print("Choose round limit(1-1000): ");
+			input = sc.next();
+			try {
+				roundLimit = Integer.parseInt(input);
+			}
+			catch (Exception e) {
+				
+			}
+			if (roundLimit >= 1 && roundLimit <= 1000) {
+				break;
+			}
+		}
+		
+		int matchesCount = 0;
+		while (true) {
+			System.out.print("Choose number of matches network plays in one generation(1-1000): ");
+			input = sc.next();
+			try {
+				matchesCount = Integer.parseInt(input);
+			}
+			catch (Exception e) {
+				
+			}
+			if (matchesCount >= 1 && matchesCount <= 1000) {
+				break;
+			}
+		}
+		
+		List<FitnessAlgorithm> fitnessFuncs = new ArrayList<>();
+		System.out.println("Choose fitness function");
+		for (int i = 0; i < NeuralUtil.FITNESS_FUNCTIONS.size(); i++) {
+			System.out.println(String.format("%d - %s", i + 1, NeuralUtil.FITNESS_FUNCTIONS.get(i).toString()));
+			fitnessFuncs.add(NeuralUtil.FITNESS_FUNCTIONS.get(i));
+		}
+		
+		int option = -1;
+		while(true) {
+			System.out.print("Choose option: ");
+			input = sc.next();
+			try {
+				option = Integer.parseInt(input);
+			}
+			catch(Exception e) {
+				
+			}
+			if (option > 0 && option <= NeuralUtil.FITNESS_FUNCTIONS.size()) {
+				break;
+			}
+		}
+		FitnessAlgorithm fitfunc = fitnessFuncs.get(option - 1);
+		
+		int mutationChance = 0;
+		while (true) {
+			System.out.print("Choose mutation chance(1-100 %): ");
+			input = sc.next();
+			try {
+				mutationChance = Integer.parseInt(input);
+			}
+			catch (Exception e) {
+				
+			}
+			if (mutationChance >= 1 && mutationChance <= 100) {
+				break;
+			}
+		}
+		
+		int bigMutationChance = 0;
+		while (true) {
+			System.out.print("Choose big mutation chance(1-100 %): ");
+			input = sc.next();
+			try {
+				bigMutationChance = Integer.parseInt(input);
+			}
+			catch (Exception e) {
+				
+			}
+			if (bigMutationChance >= 1 && bigMutationChance <= 100) {
+				break;
+			}
+		}
+		
+		float weightStdDev = 0;
+		while (true) {
+			System.out.print("Choose weight mutation standard deviation(0.0-10.0): ");
+			input = sc.next();
+			try {
+				weightStdDev = Float.parseFloat(input);
+			}
+			catch (Exception e) {
+				
+			}
+			if (weightStdDev >= 0f && weightStdDev <= 10f) {
+				break;
+			}
+		}
+		
+		float biasStdDev = 0;
+		while (true) {
+			System.out.print("Choose bias mutation standard deviation(0.0-10.0): ");
+			input = sc.next();
+			try {
+				biasStdDev = Float.parseFloat(input);
+			}
+			catch (Exception e) {
+		
+			}
+			if (biasStdDev >= 0f && biasStdDev <= 10f) {
+				break;
+			}
+		}
+		MutationAlgorithm mut = new StandardDeviationMutationAlgorithm(mutationChance, bigMutationChance, weightStdDev, biasStdDev);
+		return new EvolutionParams(NeuralUtil.TOURNAMENT_SELECTION, mut, NeuralUtil.MEAN, fitfunc, NeuralUtil.XAVIER_INIT, 
+				generationSize, numOfIterations, elitism);
+	}
+
+	private static INetworkParams getUserNetParams() {
+		// TODO Auto-generated method stub
+		System.out.println("Choose neural environment");
+		System.out.println("1 - Complex environment - complex and abstract inputs");
+		System.out.println("2 - Simple environment - simpler and less abstract inputs (recommended)");
+		String input = "";
+		while (true) {
+			System.out.print("Choose option: ");
+			input = sc.next();
+			if (input.equals("1") || input.equals("2")) {
+				break;
+			}
+		}
+		NeuralEnvironment env = null;
+		List<Integer> layers = new ArrayList<>();
+		String envInput = new String(input);
+		if (input.equals("1")) {
+			env = new NeuralNetworkEnvironment();
+			layers.add(1);
+		}
+		else {
+			env = new SimpleNeuralNetworkEnvironment();
+			layers.add(2);
+		}
+		
+		int numOfHiddenLayers = 0;
+		while(true) {
+			System.out.print("Choose number of hidden layers(1-20): ");
+			input = sc.next();
+			try {
+				numOfHiddenLayers = Integer.parseInt(input);
+			}
+			catch(Exception e) {
+				
+			}
+			if (numOfHiddenLayers > 0 && numOfHiddenLayers < 20) {
+				break;
+			}
+		}
+		
+		for (int i = 0; i < numOfHiddenLayers; i++) {
+			int num = 0;
+			while(true) {
+				System.out.print(String.format("Choose size of layer %d(2-100): " , i + 1));
+				input = sc.next();
+				try {
+					num = Integer.parseInt(input);
+				}
+				catch(Exception e) {
+					
+				}
+				if (num >= 2 && num <= 100) {
+					break;
+				}
+			}
+			layers.add(num);
+		}
+		layers.add(2);
+		
+		List<ActivationFunction> activations = new ArrayList<>();
+		System.out.println("Choose hidden layer activation function");
+		for (int i = 0; i < NeuralUtil.ACTIVATION_FUNCTIONS.size(); i++) {
+			System.out.println(String.format("%d - %s", i + 1, NeuralUtil.ACTIVATION_FUNCTIONS.get(i).toString()));
+			activations.add(NeuralUtil.ACTIVATION_FUNCTIONS.get(i));
+		}
+		
+		int option = -1;
+		while(true) {
+			System.out.print("Choose option: ");
+			input = sc.next();
+			try {
+				option = Integer.parseInt(input);
+			}
+			catch(Exception e) {
+				
+			}
+			if (option > 0 && option <= NeuralUtil.ACTIVATION_FUNCTIONS.size()) {
+				break;
+			}
+		}
+		ActivationFunction actfunc = activations.get(option - 1);
+		
+		return new NetworkParams(env, layers, NeuralUtil.LINEAR_BOUNDED, NeuralUtil.SIGMOID, actfunc);
+		
 	}
 
 	public static void playDemo() {

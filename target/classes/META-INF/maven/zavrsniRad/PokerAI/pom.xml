@@ -10,7 +10,7 @@
 
   <!-- configuration of basic properties -->
   <properties>
-    <JmpHandEvaluator-systemPath>C:\Users\frans\PokerAI\src\main\resources\lib\JmpPokerHandEvaluator.jar</JmpHandEvaluator-systemPath>
+    <JmpHandEvaluator-systemPath>C:\Users\Fran\PokerAI\src\main\resources\lib\JmpPokerHandEvaluator.jar</JmpHandEvaluator-systemPath>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>15</maven.compiler.source>

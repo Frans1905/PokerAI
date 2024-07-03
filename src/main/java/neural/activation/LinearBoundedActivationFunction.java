@@ -15,6 +15,9 @@ public class LinearBoundedActivationFunction implements ActivationFunction, Seri
 			input.putScalar(i, val);
 		}
 	}
-
 	
+	@Override
+	public String toString() {
+		return "Linear bounded";
+	}
 }

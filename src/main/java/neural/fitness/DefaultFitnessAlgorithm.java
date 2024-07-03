@@ -31,7 +31,7 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm, Runnable {
 	private NeuralEnvironment netEnvironment;
 	private static ReentrantLock mutex = new ReentrantLock();
 	private static final int DEFAULT_ROUND_LIMIT = 100;
-	private static final int DEFAULT_MATCH_NUMBER = 5;
+	private static final int DEFAULT_MATCH_NUMBER = 75;
 	private static final int DEFAULT_PLAYERS_PER_TABLE = 5;
 	private static final FitnessTracker DEFAULT_FITNESS_TRACKER = new ChipsAvgFitnessTracker();
 	private static final NeuralEnvironment DEFAULT_NEURAL_ENV = new NeuralNetworkEnvironment();

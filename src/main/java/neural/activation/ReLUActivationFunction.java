@@ -15,5 +15,9 @@ public class ReLUActivationFunction implements ActivationFunction, Serializable 
 			input.putScalar(i, val);
 		}
 	}
-
+	
+	@Override
+	public String toString() {
+		return "ReLU";
+	}
 }

@@ -40,6 +40,13 @@ public class NeuralUtil {
 	public static final int DEFAULT_NUM_OF_GENERATIONS = 100;
 	public static final int DEFAULT_ELITISM_COUNT = 2;
 	
+	public static final List<ActivationFunction> ACTIVATION_FUNCTIONS = List.of(SIGMOID, RELU, LINEAR_BOUNDED);
+	
+	public static final List<CrossingAlgorithm> CROSSING_ALGORITHM = List.of(RANDOM, MEAN);
+	
+	public static final List<FitnessAlgorithm> FITNESS_FUNCTIONS = List.of(AVG_CHIPS, MOVE_EVAL, STRENGTH_CHIP_RATIO, RANK);
+
+	
 	public static final IEvolutionParams DEFAULT_EVOLUTION_PARAMS = new EvolutionParams(TOURNAMENT_SELECTION, STD_DEV, RANDOM, AVG_CHIPS, 
 			XAVIER_INIT, DEFAULT_GENERATION_SIZE, DEFAULT_NUM_OF_GENERATIONS, DEFAULT_ELITISM_COUNT);
 	
