@@ -91,6 +91,9 @@ public class PokerNeuralNetwork implements NeuralNetwork, Serializable {
 		INDArray inputReg = input.getScalar(1);
 		params.getOutputLayerRegressionActivation().activate(inputReg);
 		params.getOutputLayerClassActivation().activate(inputClass);
+		if (inputClass.getFloat(0) >= 0.8f  && inputReg.getFloat(0) > 0f) {
+			int one = 1;
+		}
 		output.add(inputClass);
 		output.add(inputReg);
 		return Nd4j.create(output, 2);

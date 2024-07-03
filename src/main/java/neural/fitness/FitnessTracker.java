@@ -12,7 +12,7 @@ import neural.NeuralNetwork;
 public interface FitnessTracker {
 	Map<ActionType, Integer> actions = new HashMap<>();
 	void addPoints(NeuralNetwork net, float points);
-	void addGameResults(NeuralNetwork net, float chips);
+	void addGameResults(NeuralNetwork net, Game game, int index);
 	void addRoundResults(NeuralNetwork net, Game game, int index);
 	default void informAction(NeuralNetwork net, Action action, int playerIndex, Player p) {
 		actions.put(action.getActionType(), actions.getOrDefault(action.getActionType(), 0) + 1);
@@ -25,4 +25,6 @@ public interface FitnessTracker {
 	default void reset() {
 		actions.clear();
 	};
+	
+	FitnessTracker duplicate();
 }

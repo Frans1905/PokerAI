@@ -23,13 +23,13 @@ public class ChipsAvgFitnessTracker implements FitnessTracker {
 		fitnesses.put(net, fitnesses.getOrDefault(net, 0f) + points);
 	}
 	
-	public void addGameResults(NeuralNetwork net, float chips) {
+	public void addGameResults(NeuralNetwork net, Game game, int index) {
 		int numOfMatches = gamesPlayed.getOrDefault(net, 0);
 		float fitness = fitnesses.getOrDefault(net, 0f);
 		float bonusFitness = fitnesses.getOrDefault(net, 0f);
 		fitness -= bonusFitness;
 		fitness *= numOfMatches;
-		fitness += chips;
+		fitness += game.getPlayers().get(index).getChipCount();
 		fitness /= ++numOfMatches;
 		fitness += bonusFitness;
 		gamesPlayed.put(net, numOfMatches);
@@ -60,5 +60,11 @@ public class ChipsAvgFitnessTracker implements FitnessTracker {
 	public void addRoundResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public FitnessTracker duplicate() {
+		// TODO Auto-generated method stub
+		return new ChipsAvgFitnessTracker();
 	}
 }

@@ -240,7 +240,7 @@ public class NeuralNetworkEnvironment implements NeuralEnvironment, Serializable
 	@Override
 	public void updateEnd(Game game, int numCurrentPlayer) {
 		// TODO Auto-generated method stub
-		tracker.addGameResults(net, (float) game.getPlayers().get(numCurrentPlayer).getChipCount());
+		tracker.addGameResults(net, game, numCurrentPlayer);
 	}
 
 	@Override

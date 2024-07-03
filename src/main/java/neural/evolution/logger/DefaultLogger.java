@@ -42,13 +42,13 @@ public class DefaultLogger implements Logger {
 		System.out.printf("Mean fitness: %f\n", mean);
 		System.out.printf("Median fitness: %f\n", median);
 		System.out.printf("Max fitness: %f\n\n", values.get(values.size() - 1));
-		System.out.println("Action || Count || Part\n");
+		System.out.println("Action ||  Count || Part\n");
 		int actionsum = 0;
 		for (int value : actions.values()) {
 			actionsum += value;
 		}
 		for (Entry<ActionType, Integer> entry : actions.entrySet()) {
-			System.out.printf("%s || %5d || %4d%%\n", entry.getKey().toString(), entry.getValue(), entry.getValue() / actionsum);
+			System.out.printf("%6s || %6d || %.2f%%\n", entry.getKey().toString(), entry.getValue(), (float)entry.getValue() * 100f / (float)actionsum);
 		}
 		System.out.println("");
 	}

@@ -24,7 +24,7 @@ import neural.evolution.logger.Logger;
 import neural.fitness.DefaultFitnessAlgorithm;
 import neural.fitness.FitnessAlgorithm;
 import neural.fitness.NullTracker;
-import neural.fitness.StrengthChipRatioFitnessTracker;
+import neural.fitness.RankFitnessTracker;
 import neural.mutation.MutationAlgorithm;
 import neural.mutation.StandardDeviationMutationAlgorithm;
 import neural.strategy.NetworkStrategy;
@@ -167,7 +167,7 @@ public class PokerAI {
 
 	private static void trainNetwork() {
 		// TODO Auto-generated method stub
-		FitnessAlgorithm fitnessAlg = new DefaultFitnessAlgorithm(100, 75, 5, new StrengthChipRatioFitnessTracker());
+		FitnessAlgorithm fitnessAlg = new DefaultFitnessAlgorithm(100, 75, 5, new RankFitnessTracker());
 		MutationAlgorithm mut = new StandardDeviationMutationAlgorithm(0.2f, 0.3f, 0.3f, 0.3f);
 		INetworkParams netparams = new NetworkParams(new SimpleNeuralNetworkEnvironment(), List.of(3, 20, 15, 10, 2), NeuralUtil.LINEAR_BOUNDED , NeuralUtil.SIGMOID, NeuralUtil.RELU);
 		IEvolutionParams evoparams = new EvolutionParams(NeuralUtil.TOURNAMENT_SELECTION, 

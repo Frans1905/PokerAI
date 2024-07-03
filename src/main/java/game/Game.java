@@ -324,7 +324,7 @@ public class Game {
 		return numCurrentPlayer;
 	}
 
-	private void drawPlayerCards() {
+	protected void drawPlayerCards() {
 		// TODO Auto-generated method stub
 		for (Player p: activePlayers) {
 			p.setCards(dealer.dealPair());

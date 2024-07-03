@@ -16,7 +16,7 @@ public class NullTracker implements FitnessTracker {
 	}
 
 	@Override
-	public void addGameResults(NeuralNetwork net, float chips) {
+	public void addGameResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -49,6 +49,12 @@ public class NullTracker implements FitnessTracker {
 	public void reset() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public FitnessTracker duplicate() {
+		// TODO Auto-generated method stub
+		return new NullTracker();
 	}
 
 }

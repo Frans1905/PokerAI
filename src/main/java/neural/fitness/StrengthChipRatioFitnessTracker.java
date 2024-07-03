@@ -17,20 +17,20 @@ public class StrengthChipRatioFitnessTracker implements FitnessTracker {
 	}
 	
 	@Override
-	public void addPoints(NeuralNetwork net, float points) {
+	public synchronized void addPoints(NeuralNetwork net, float points) {
 		// TODO Auto-generated method stub
 		fitnesses.put(net, fitnesses.getOrDefault(net, 0f) + points);
 		
 	}
 
 	@Override
-	public void addGameResults(NeuralNetwork net, float chips) {
+	public synchronized void addGameResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addRoundResults(NeuralNetwork net, Game game, int index) {
+	public synchronized void addRoundResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
 		Player p = game.getPlayers().get(index);
 		if (game.getCardsOnBoard().size() != 5) {
@@ -53,13 +53,13 @@ public class StrengthChipRatioFitnessTracker implements FitnessTracker {
 	}
 
 	@Override
-	public void informAction(NeuralNetwork net, Action action, int playerIndex, Player p) {
+	public synchronized void informAction(NeuralNetwork net, Action action, int playerIndex, Player p) {
 		// TODO Auto-generated method stub
 		FitnessTracker.super.informAction(net, action, playerIndex, p);
 	}
 
 	@Override
-	public void subtractPoints(NeuralNetwork net, float points) {
+	public synchronized void subtractPoints(NeuralNetwork net, float points) {
 		// TODO Auto-generated method stub
 		addPoints(net, -points);
 	}
@@ -75,6 +75,12 @@ public class StrengthChipRatioFitnessTracker implements FitnessTracker {
 		// TODO Auto-generated method stub
 		FitnessTracker.super.reset();
 		fitnesses.clear();
+	}
+
+	@Override
+	public FitnessTracker duplicate() {
+		// TODO Auto-generated method stub
+		return new StrengthChipRatioFitnessTracker();
 	}
 
 }

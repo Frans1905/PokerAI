@@ -13,6 +13,7 @@ import neural.fitness.ChipsAvgFitnessTracker;
 import neural.fitness.DefaultFitnessAlgorithm;
 import neural.fitness.FitnessAlgorithm;
 import neural.fitness.MoveEvalFitnessTracker;
+import neural.fitness.RankFitnessTracker;
 import neural.fitness.StrengthChipRatioFitnessTracker;
 import neural.initialization.Initializator;
 import neural.initialization.XavierInitializator;
@@ -32,6 +33,7 @@ public class NeuralUtil {
 	public static final FitnessAlgorithm AVG_CHIPS = new DefaultFitnessAlgorithm(new ChipsAvgFitnessTracker());
 	public static final FitnessAlgorithm MOVE_EVAL = new DefaultFitnessAlgorithm(new MoveEvalFitnessTracker());
 	public static final FitnessAlgorithm STRENGTH_CHIP_RATIO = new DefaultFitnessAlgorithm(new StrengthChipRatioFitnessTracker());
+	public static final FitnessAlgorithm RANK = new DefaultFitnessAlgorithm(new RankFitnessTracker());
 	public static final MutationAlgorithm STD_DEV = new StandardDeviationMutationAlgorithm();
 	public static final Initializator XAVIER_INIT = new XavierInitializator();
 	public static final int DEFAULT_GENERATION_SIZE = 50;
