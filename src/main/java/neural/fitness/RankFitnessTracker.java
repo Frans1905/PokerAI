@@ -47,19 +47,24 @@ public class RankFitnessTracker implements FitnessTracker {
 		}
 		Collections.sort(values);
 		Collections.reverse(values);
+		float points = 0;
 		for (int i = 0; i < values.size(); i++) {
 			if (values.get(i) == thisp.getChipCount()) {
-				float points = 5 - (i + 1);
-				this.fitnesses.put(net, this.fitnesses.getOrDefault(net, 0f) + points);
-				break;
+				points = 5 - (i + 1);
 			}
 		}
+		this.fitnesses.put(net, this.fitnesses.getOrDefault(net, 0f) + points);
+
 	}
 
 	@Override
 	public void addRoundResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
 		if (game.getPlayers().get(index).getChipCount() != 0) {
+			return;
+		}
+		if (game.getPlayers().get(index).getChipCount() == 0 && 
+				game.getPlayers().get(index).getTotalBetChipCount() == 0) {
 			return;
 		}
 		float points = 0;

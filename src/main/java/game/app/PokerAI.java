@@ -3,6 +3,8 @@ package game.app;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -42,6 +44,8 @@ public class PokerAI {
 	private static final int DEFAULT_ROUND_LIMIT = 50;
 	
 	public static void main(String[] args) {
+			
+		System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 		
 			System.out.println("/============================================\\\r\n"
 				             + "|| ____         _                 _     ___ ||\r\n"

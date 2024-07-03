@@ -57,12 +57,7 @@ public class SimpleNeuralNetworkEnvironment implements NeuralEnvironment, Serial
 		float moveVal = output.getFloat(0);
 		Action act;
 		if (moveVal < 0.30f) {
-			if (game.getCallChipCount() == thisp.getBetChipCount()) {
-				act = Actions.getCheckAction(game.getCallChipCount());
-			}
-			else {
-				act = Actions.getFoldAction();
-			}
+			act = Actions.getFoldAction();
 		}
 		else if (moveVal < 0.80f) {
 			if (game.getCallChipCount() == thisp.getBetChipCount()) {
@@ -123,7 +118,7 @@ public class SimpleNeuralNetworkEnvironment implements NeuralEnvironment, Serial
 		}
 		**/
 		//long raiseval = Math.min(Math.max(game.getCallChipCount(), 15) * raiseMult, thisp.getChipCount());
-		long raiseval = (long) Math.max(game.getMinimumRaiseValue(), raiseValueSig * (thisp.getChipCount() + thisp.getTotalBetChipCount()) - thisp.getTotalBetChipCount());
+		long raiseval = (long) Math.max(game.getMinimumRaiseValue(), (raiseValueSig / 10f) * (thisp.getChipCount() + thisp.getTotalBetChipCount()) - thisp.getTotalBetChipCount());
 		raiseval= Math.min(thisp.getChipCount(), raiseval);
 		if (raiseval == thisp.getChipCount()) {
 			return Actions.getAllInAction(raiseval, game.getCallChipCount());
