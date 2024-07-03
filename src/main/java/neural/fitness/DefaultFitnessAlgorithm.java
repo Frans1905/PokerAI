@@ -6,8 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import game.Game;
+import game.TrainingGame;
 import game.environment.Environment;
 import game.environment.NeuralEnvironment;
 import game.environment.NeuralNetworkEnvironment;
@@ -16,16 +18,18 @@ import game.player.DefaultPlayer;
 import game.player.Player;
 import neural.NeuralNetwork;
 
-public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
+public class DefaultFitnessAlgorithm implements FitnessAlgorithm, Runnable {
 
 	FitnessTracker tracker;
 	private List<NeuralNetwork> neuralnets;
 	private Map<NeuralNetwork, Float> fitnesses;
+	private List<List<Player>> tables;
 	private Game game;
 	private int roundLimit;
 	private int numberOfMatches;
 	private int numOfPlayersPerTable;
 	private NeuralEnvironment netEnvironment;
+	private static ReentrantLock mutex = new ReentrantLock();
 	private static final int DEFAULT_ROUND_LIMIT = 100;
 	private static final int DEFAULT_MATCH_NUMBER = 5;
 	private static final int DEFAULT_PLAYERS_PER_TABLE = 5;
@@ -38,6 +42,7 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 		this.numberOfMatches = numberOfMatches;
 		this.numOfPlayersPerTable = playersPerTable;
 		this.fitnesses = new HashMap<NeuralNetwork, Float>();
+		this.tables = new ArrayList<>();
 		this.neuralnets = new ArrayList<>();
 		netEnvironment = DEFAULT_NEURAL_ENV; 
 		this.game = new Game(new JmpEvaluator());
@@ -74,15 +79,43 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 		tracker.reset();
 		Map<NeuralNetwork, Float> fitnessMap = new HashMap<>();
 		for (int i = 0; i < numberOfMatches; i++) {
-			List<List<Player>> tables = arrangeTables();
-			playAllGames(tables);
+			arrangeTables();
+			playAllGames();
 		}
 		this.fitnesses = tracker.getFitnesses();
 		return this.fitnesses;
 	}
 
-	private void playAllGames(List<List<Player>> tables) {
+	public void run() {
+		mutex.lock();
+		List<Player> table = tables.remove(tables.size() - 1);
+		mutex.unlock();
+		Game game = new TrainingGame(table, new JmpEvaluator());
+		for (int i = 0; i < roundLimit && !game.isOver(); i++) {
+			game.setupNewRound();
+			game.playRound();
+		}
+		game.endMatch();
+	}
+	
+	private void playAllGames() {
 		// TODO Auto-generated method stub
+		List<Thread> threads = new ArrayList<>();
+		int size = tables.size();
+		for (int i = 0; i < size; i++) {
+			Thread t = new Thread(this);
+			threads.add(t);
+			t.start();
+		}
+		for (Thread t : threads) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		/**
 		for (List<Player> list : tables) {
 			game.resetGame(list);
 			for (int i = 0; i < roundLimit && !game.isOver(); i++) {
@@ -91,6 +124,7 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 			}
 			game.endMatch();
 		}
+		**/
 	}
 
 	private List<List<Player>> arrangeTables() {
@@ -113,6 +147,7 @@ public class DefaultFitnessAlgorithm implements FitnessAlgorithm {
 			}
 			out.add(table);
 		}
+		this.tables = out;
 		return out;
 	}
 

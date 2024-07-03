@@ -30,7 +30,7 @@ public class Dealer {
 	}
 
 	public CardPair dealPair() {
-		return new CardPair(drawCard(), drawCard());
+		return new CardPair(cardDeck.drawCard(), cardDeck.drawCard());
 	}
 
 	public void dealPairs(List<CardPair> pairs) {

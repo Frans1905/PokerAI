@@ -21,5 +21,12 @@ public class Card {
 		return rank;
 	}
 	
+	@Override
+	public String toString() {
+		if (this.getValue() < 10) {
+			return Integer.toString(getValue());
+		}
+		return this.getRank().toString();
+	}
 	
 }

@@ -28,9 +28,9 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 	}
 
 	@Override
-	public void addGameResults(NeuralNetwork net, float chips) {
+	public void addGameResults(NeuralNetwork net, Game game, int index) {
 		// TODO Auto-generated method stub
-		if (chips == 0) {
+		if (game.getPlayers().get(index).getChipCount() == 0) {
 			subtractPoints(net, 500);
 		}
 	}
@@ -162,6 +162,12 @@ public class MoveEvalFitnessTracker implements FitnessTracker {
 			addPoints(net, 20f * (1 -(playerStrength / 7462f)));
 		}
 		this.actions.get(net).clear();
+	}
+
+	@Override
+	public FitnessTracker duplicate() {
+		// TODO Auto-generated method stub
+		return new MoveEvalFitnessTracker();
 	}
 
 }
