@@ -54,7 +54,6 @@ public class RankFitnessTracker implements FitnessTracker {
 			}
 		}
 		this.fitnesses.put(net, this.fitnesses.getOrDefault(net, 0f) + points);
-
 	}
 
 	@Override

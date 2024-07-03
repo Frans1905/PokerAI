@@ -323,8 +323,8 @@ public class Game {
 				players.get(numCurrentPlayer).getLastAction().getActionType() == ActionType.ALLIN);
 		return numCurrentPlayer;
 	}
-
-    void drawPlayerCards() {
+	
+	protected void drawPlayerCards() {
 		// TODO Auto-generated method stub
 		for (Player p: activePlayers) {
 			p.setCards(dealer.dealPair());
